@@ -1,0 +1,1216 @@
+options:
+  parameters:
+    author: Alyse Jones and William "Chris" Headley
+    catch_exceptions: 'True'
+    category: '[RL OFDM DSA]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: hb
+    hier_block_src_path: '.:'
+    id: ofdm_tx_hier
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: run
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: OFDM Transmitter Hierarchical
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 12.0]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: all_carriers
+  id: variable
+  parameters:
+    comment: ''
+    value: '[*range(-int(fft_len/2)+ceil(num_guard/2),0),*range(1,int(fft_len/2)-floor(num_guard/2))]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1400, 140.0]
+    rotation: 0
+    state: enabled
+- name: cp_len
+  id: variable
+  parameters:
+    comment: ''
+    value: int(fft_len/4)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1632, 76.0]
+    rotation: 0
+    state: true
+- name: fft_len
+  id: variable
+  parameters:
+    comment: ''
+    value: '64'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [768, 140.0]
+    rotation: 0
+    state: true
+- name: guard_interval_time
+  id: variable
+  parameters:
+    comment: ''
+    value: (1/((1/cp_len)*(signal_samp_rate)))
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1424, 268.0]
+    rotation: 0
+    state: true
+- name: header_formatter
+  id: variable
+  parameters:
+    comment: ''
+    value: digital.packet_header_ofdm([occupied_carriers], n_syms=num_header_symbs,
+      len_tag_key=packet_length_tag_key, frame_len_tag_key=length_tag_key, bits_per_header_sym=header_mod.bits_per_symbol(),
+      bits_per_payload_sym=payload_mod.bits_per_symbol(), scramble_header=False)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [648, 268.0]
+    rotation: 0
+    state: enabled
+- name: header_len_bits
+  id: variable
+  parameters:
+    comment: ''
+    value: num_header_symbs*num_occupied
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1288, 76.0]
+    rotation: 0
+    state: true
+- name: header_mod
+  id: variable_constellation
+  parameters:
+    comment: ''
+    const_points: '[-1-1j, -1+1j, 1+1j, 1-1j]'
+    dims: '1'
+    normalization: digital.constellation.AMPLITUDE_NORMALIZATION
+    precision: '8'
+    rot_sym: '4'
+    soft_dec_lut: None
+    sym_map: '[0, 1, 3, 2]'
+    type: bpsk
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [648, 204.0]
+    rotation: 0
+    state: true
+- name: ifft_time
+  id: variable
+  parameters:
+    comment: ''
+    value: 1/(signal_samp_rate/fft_len)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1856, 76.0]
+    rotation: 0
+    state: true
+- name: length_tag_key
+  id: variable
+  parameters:
+    comment: ''
+    value: '"frame_len"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [832, 268.0]
+    rotation: 0
+    state: enabled
+- name: num_guard
+  id: variable
+  parameters:
+    comment: ''
+    value: '11'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [928, 76.0]
+    rotation: 0
+    state: true
+- name: num_header_symbs
+  id: variable
+  parameters:
+    comment: ''
+    value: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [648, 76.0]
+    rotation: 0
+    state: true
+- name: num_occupied
+  id: variable
+  parameters:
+    comment: ''
+    value: len(occupied_carriers)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1288, 140.0]
+    rotation: 0
+    state: true
+- name: num_payload_symbs
+  id: variable
+  parameters:
+    comment: ''
+    value: len(occupied_carrier_set)-1
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [784, 76.0]
+    rotation: 0
+    state: true
+- name: num_pilots
+  id: variable
+  parameters:
+    comment: ''
+    value: len(pilot_carriers)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1288, 204.0]
+    rotation: 0
+    state: true
+- name: occupied_carrier_set
+  id: variable
+  parameters:
+    comment: ''
+    value: ((occupied_carriers), (occupied_carriers),(occupied_carriers),(occupied_carriers),(occupied_carriers),(occupied_carriers),(occupied_carriers),(occupied_carriers),)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1552, 140.0]
+    rotation: 0
+    state: true
+- name: occupied_carriers
+  id: variable
+  parameters:
+    comment: ''
+    value: '[ x for x in all_carriers if x not in set(pilot_carriers)]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1712, 140.0]
+    rotation: 0
+    state: enabled
+- name: ofdm_symbol_duration
+  id: variable
+  parameters:
+    comment: ''
+    value: (1/((1/(fft_len+cp_len))*(signal_samp_rate)))
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1704, 76.0]
+    rotation: 0
+    state: true
+- name: ofdm_symbol_throughput
+  id: variable
+  parameters:
+    comment: ''
+    value: num_occupied*1*(1/2)*1/(ofdm_symbol_duration)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1800, 204.0]
+    rotation: 0
+    state: true
+- name: packet_len_bytes
+  id: variable
+  parameters:
+    comment: ''
+    value: int(num_payload_symbs*(num_occupied*log2(len(payload_mod.points())))/8)-4
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1408, 76.0]
+    rotation: 0
+    state: enabled
+- name: packet_length_tag_key
+  id: variable
+  parameters:
+    comment: ''
+    value: '"packet_len"'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [944, 268.0]
+    rotation: 0
+    state: enabled
+- name: payload_mod
+  id: variable_constellation
+  parameters:
+    comment: ''
+    const_points: '[(-1-1j)/sqrt(2), ( -1+1j)/sqrt(2), (1+1j)/sqrt(2), (1-1j)/sqrt(2)]'
+    dims: '1'
+    normalization: digital.constellation.AMPLITUDE_NORMALIZATION
+    precision: '8'
+    rot_sym: '4'
+    soft_dec_lut: None
+    sym_map: '[0, 1, 3, 2]'
+    type: calcdist
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [264, 236.0]
+    rotation: 0
+    state: true
+- name: pilot_carrier_set
+  id: variable
+  parameters:
+    comment: ''
+    value: ((pilot_carriers),(pilot_carriers),(pilot_carriers),(pilot_carriers),(pilot_carriers),(pilot_carriers),(pilot_carriers),(pilot_carriers),)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1496, 204.0]
+    rotation: 0
+    state: true
+- name: pilot_carriers
+  id: variable
+  parameters:
+    comment: ''
+    value: '[-21,-7,7,21]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [648, 140.0]
+    rotation: 0
+    state: enabled
+- name: pilot_symbol_set
+  id: variable
+  parameters:
+    comment: ''
+    value: ((pilot_symbols),(pilot_symbols),(pilot_symbols),(pilot_symbols),(pilot_symbols),(pilot_symbols),(pilot_symbols),(pilot_symbols),)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1648, 204.0]
+    rotation: 0
+    state: true
+- name: pilot_symbols
+  id: variable
+  parameters:
+    comment: ''
+    value: '[1.0] * num_pilots'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1384, 204.0]
+    rotation: 0
+    state: true
+- name: sc_spacing
+  id: variable
+  parameters:
+    comment: ''
+    value: signal_samp_rate/fft_len
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1536, 76.0]
+    rotation: 0
+    state: true
+- name: sync_symbol_time
+  id: variable
+  parameters:
+    comment: ''
+    value: training_symbol_time + 2*ifft_time
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1560, 268.0]
+    rotation: 0
+    state: true
+- name: sync_word_0
+  id: variable
+  parameters:
+    comment: ''
+    value: '[0, 0, 0, 0, 0, 0, 0, -1.4142135623730951, 0, -1.4142135623730951, 0,
+      1.4142135623730951, 0, 1.4142135623730951, 0, 1.4142135623730951, 0, -1.4142135623730951,
+      0, -1.4142135623730951, 0, 1.4142135623730951, 0, 1.4142135623730951, 0, -1.4142135623730951,
+      0, 1.4142135623730951, 0, 1.4142135623730951, 0, -1.4142135623730951, 0, -1.4142135623730951,
+      0, -1.4142135623730951, 0, 1.4142135623730951, 0, 1.4142135623730951, 0, 1.4142135623730951,
+      0, -1.4142135623730951, 0, 1.4142135623730951, 0, 1.4142135623730951, 0, 1.4142135623730951,
+      0, 1.4142135623730951, 0, -1.4142135623730951, 0, 1.4142135623730951, 0, -1.4142135623730951,
+      0, 0, 0, 0, 0, 0]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [840, 140.0]
+    rotation: 0
+    state: true
+- name: sync_word_1
+  id: variable
+  parameters:
+    comment: ''
+    value: '[0, 0, 0, 0, 0, 0, -1, -1, 1, -1, -1, -1, -1, 1, -1, 1, 1, -1, 1, 1, -1,
+      1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, 0, -1, 1, -1, 1, -1, 1, -1, -1, 1, 1,
+      -1, -1, 1, -1, -1, -1, -1, 1, 1, 1, -1, 1, -1, -1, 1, 1, 0, 0, 0, 0, 0]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [984, 140.0]
+    rotation: 0
+    state: true
+- name: total_ofdm_symbs
+  id: variable
+  parameters:
+    comment: ''
+    value: num_payload_symbs+num_header_symbs+2
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1288, 268.0]
+    rotation: 0
+    state: true
+- name: total_throughput
+  id: variable
+  parameters:
+    comment: ''
+    value: 8*ofdm_symbol_throughput*(140.8e-3)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1848, 268.0]
+    rotation: 0
+    state: true
+- name: training_symbol_time
+  id: variable
+  parameters:
+    comment: ''
+    value: ifft_time/2
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1696, 268.0]
+    rotation: 0
+    state: true
+- name: analog_const_source_x_0
+  id: analog_const_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    const: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: short
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1112, 740.0]
+    rotation: 0
+    state: true
+- name: analog_const_source_x_0_0
+  id: analog_const_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    const: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: short
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1112, 788.0]
+    rotation: 0
+    state: true
+- name: analog_const_source_x_0_1
+  id: analog_const_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    const: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: short
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1112, 836.0]
+    rotation: 0
+    state: true
+- name: analog_random_source_x_0
+  id: analog_random_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    max: '256'
+    maxoutbuf: '0'
+    min: '0'
+    minoutbuf: '0'
+    num_samps: packet_len_bytes*1000
+    repeat: 'True'
+    type: byte
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [256, 508.0]
+    rotation: 0
+    state: true
+- name: analog_sig_source_x_0
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '1.0'
+    comment: ''
+    freq: cent_freq
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0.0'
+    samp_rate: wide_samp_rate
+    type: complex
+    waveform: analog.GR_COS_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1016, 1076.0]
+    rotation: 0
+    state: enabled
+- name: back_pad
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: ''
+    short_id: ''
+    type: ''
+    value: '500'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [472, 76.0]
+    rotation: 0
+    state: true
+- name: blocks_burst_tagger_0
+  id: blocks_burst_tagger
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    false_key: burst_end
+    false_value: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    true_key: burst_start
+    true_value: 'True'
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1560, 652.0]
+    rotation: 0
+    state: true
+- name: blocks_file_sink_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: ../data/symbols.dat
+    type: complex
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1760, 372.0]
+    rotation: 0
+    state: true
+- name: blocks_multiply_xx_0
+  id: blocks_multiply_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '2'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1312, 968.0]
+    rotation: 0
+    state: enabled
+- name: blocks_repack_bits_bb_1
+  id: blocks_repack_bits_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    align_output: 'False'
+    comment: ''
+    endianness: gr.GR_LSB_FIRST
+    k: '8'
+    l: payload_mod.bits_per_symbol()
+    len_tag_key: packet_length_tag_key
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [952, 460.0]
+    rotation: 0
+    state: enabled
+- name: blocks_stream_mux_0
+  id: blocks_stream_mux
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    lengths: (int(front_pad-0.1*front_pad),int((total_ofdm_symbs)*(fft_len+cp_len)+0.1*front_pad+0.1*back_pad),
+      int(back_pad-0.1*back_pad))
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '3'
+    type: short
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1328, 760.0]
+    rotation: 0
+    state: enabled
+- name: blocks_stream_to_tagged_stream_0
+  id: blocks_stream_to_tagged_stream
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    len_tag_key: packet_length_tag_key
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    packet_len: packet_len_bytes
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [456, 460.0]
+    rotation: 0
+    state: true
+- name: blocks_tagged_stream_mux_0
+  id: blocks_tagged_stream_mux
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    lengthtagname: packet_length_tag_key
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    ninputs: '2'
+    tag_preserve_head_pos: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1512, 456.0]
+    rotation: 0
+    state: enabled
+- name: cent_freq
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: ''
+    short_id: ''
+    type: eng_float
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [384, 76.0]
+    rotation: 0
+    state: enabled
+- name: digital_burst_shaper_xx_0
+  id: digital_burst_shaper_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    insert_phasing: 'False'
+    length_tag_name: '"packet_len"'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    post_padding: back_pad
+    pre_padding: front_pad
+    type: complex
+    window: firdes.window(5,10,6.76)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1288, 628.0]
+    rotation: 0
+    state: enabled
+- name: digital_chunks_to_symbols_xx_0
+  id: digital_chunks_to_symbols_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    dimension: '1'
+    in_type: byte
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_ports: '1'
+    out_type: complex
+    symbol_table: payload_mod.points()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1256, 472.0]
+    rotation: 0
+    state: enabled
+- name: digital_chunks_to_symbols_xx_0_0
+  id: digital_chunks_to_symbols_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    dimension: '1'
+    in_type: byte
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_ports: '1'
+    out_type: complex
+    symbol_table: header_mod.points()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1256, 384.0]
+    rotation: 0
+    state: enabled
+- name: digital_crc32_bb_0
+  id: digital_crc32_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    check: 'False'
+    comment: ''
+    lengthtagname: packet_length_tag_key
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    packed: 'True'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [704, 452.0]
+    rotation: 0
+    state: enabled
+- name: digital_ofdm_carrier_allocator_cvc_0
+  id: digital_ofdm_carrier_allocator_cvc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    fft_len: fft_len
+    len_tag_key: packet_length_tag_key
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    occupied_carriers: occupied_carrier_set
+    output_is_shifted: 'True'
+    pilot_carriers: pilot_carrier_set
+    pilot_symbols: pilot_symbol_set
+    sync_words: ((sync_word_0),(sync_word_1),)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [368, 612.0]
+    rotation: 0
+    state: enabled
+- name: digital_ofdm_cyclic_prefixer_0
+  id: digital_ofdm_cyclic_prefixer
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    cp_len: cp_len
+    input_size: fft_len
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    rolloff: '0'
+    tagname: packet_length_tag_key
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [840, 644.0]
+    rotation: 0
+    state: enabled
+- name: digital_packet_headergenerator_bb_0
+  id: digital_packet_headergenerator_bb
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    header_formatter: header_formatter.base()
+    len_tag_key: packet_length_tag_key
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [920, 372.0]
+    rotation: 0
+    state: true
+- name: fft_vxx_0
+  id: fft_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    fft_size: fft_len
+    forward: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nthreads: '1'
+    shift: 'True'
+    type: complex
+    window: ()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [608, 628.0]
+    rotation: 0
+    state: enabled
+- name: front_pad
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: ''
+    short_id: ''
+    type: ''
+    value: '500'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [392, 156.0]
+    rotation: 0
+    state: true
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: from math import sqrt
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 204.0]
+    rotation: 0
+    state: true
+- name: import_0_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: from math import log2
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 156.0]
+    rotation: 0
+    state: enabled
+- name: import_0_1
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: from math import ceil
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 252.0]
+    rotation: 0
+    state: true
+- name: import_0_1_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: from math import floor
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 300.0]
+    rotation: 0
+    state: true
+- name: low_pass_filter_0
+  id: low_pass_filter
+  parameters:
+    affinity: ''
+    alias: ''
+    beta: '6.76'
+    comment: ''
+    cutoff_freq: signal_samp_rate/2
+    decim: '1'
+    gain: '1'
+    interp: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: wide_samp_rate
+    type: interp_fir_filter_ccf
+    width: 0.25*signal_samp_rate/2
+    win: window.WIN_HAMMING
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1024, 916.0]
+    rotation: 0
+    state: enabled
+- name: mmse_resampler_xx_0
+  id: mmse_resampler_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    phase_shift: '0'
+    resamp_ratio: signal_samp_rate/wide_samp_rate
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [768, 936.0]
+    rotation: 0
+    state: enabled
+- name: note_0
+  id: note
+  parameters:
+    alias: ''
+    comment: ''
+    note: Derived Variables
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1504, 20.0]
+    rotation: 0
+    state: true
+- name: note_0_0
+  id: note
+  parameters:
+    alias: ''
+    comment: ''
+    note: Fixed Variables
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [824, 20.0]
+    rotation: 0
+    state: true
+- name: note_0_0_0
+  id: note
+  parameters:
+    alias: ''
+    comment: ''
+    note: Tunable Variables
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [344, 20.0]
+    rotation: 0
+    state: true
+- name: pad_sink_0
+  id: pad_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    label: tx_out
+    num_streams: '1'
+    optional: 'False'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1760, 980.0]
+    rotation: 0
+    state: true
+- name: pad_sink_1
+  id: pad_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    label: tx_bits_out
+    num_streams: '1'
+    optional: 'True'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1760, 1220.0]
+    rotation: 0
+    state: true
+- name: pad_source_0
+  id: pad_source
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    label: cent_freq
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_streams: '1'
+    optional: 'True'
+    type: message
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [280, 1116.0]
+    rotation: 0
+    state: enabled
+- name: signal_samp_rate
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: ''
+    short_id: ''
+    type: eng_float
+    value: 1e6/16
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [264, 156.0]
+    rotation: 0
+    state: true
+- name: virtual_sink_0
+  id: virtual_sink
+  parameters:
+    alias: ''
+    comment: ''
+    stream_id: tx_symbs
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1760, 468.0]
+    rotation: 0
+    state: enabled
+- name: virtual_sink_1
+  id: virtual_sink
+  parameters:
+    alias: ''
+    comment: ''
+    stream_id: sig_samps
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1768, 676.0]
+    rotation: 0
+    state: enabled
+- name: virtual_sink_2
+  id: virtual_sink
+  parameters:
+    alias: ''
+    comment: ''
+    stream_id: tx_bits_out
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1760, 532.0]
+    rotation: 0
+    state: true
+- name: virtual_source_0
+  id: virtual_source
+  parameters:
+    alias: ''
+    comment: ''
+    stream_id: sig_samps
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [248, 932.0]
+    rotation: 0
+    state: enabled
+- name: virtual_source_1
+  id: virtual_source
+  parameters:
+    alias: ''
+    comment: ''
+    stream_id: tx_symbs
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [152, 660.0]
+    rotation: 0
+    state: enabled
+- name: virtual_source_2
+  id: virtual_source
+  parameters:
+    alias: ''
+    comment: ''
+    stream_id: tx_bits_out
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [248, 1220.0]
+    rotation: 0
+    state: enabled
+- name: wide_samp_rate
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: none
+    label: ''
+    short_id: ''
+    type: eng_float
+    value: 20e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [264, 76.0]
+    rotation: 0
+    state: true
+
+connections:
+- [analog_const_source_x_0, '0', blocks_stream_mux_0, '0']
+- [analog_const_source_x_0_0, '0', blocks_stream_mux_0, '1']
+- [analog_const_source_x_0_1, '0', blocks_stream_mux_0, '2']
+- [analog_random_source_x_0, '0', blocks_stream_to_tagged_stream_0, '0']
+- [analog_random_source_x_0, '0', virtual_sink_2, '0']
+- [analog_sig_source_x_0, '0', blocks_multiply_xx_0, '1']
+- [blocks_burst_tagger_0, '0', virtual_sink_1, '0']
+- [blocks_multiply_xx_0, '0', pad_sink_0, '0']
+- [blocks_repack_bits_bb_1, '0', digital_chunks_to_symbols_xx_0, '0']
+- [blocks_stream_mux_0, '0', blocks_burst_tagger_0, '1']
+- [blocks_stream_to_tagged_stream_0, '0', digital_crc32_bb_0, '0']
+- [blocks_tagged_stream_mux_0, '0', blocks_file_sink_0, '0']
+- [blocks_tagged_stream_mux_0, '0', virtual_sink_0, '0']
+- [digital_burst_shaper_xx_0, '0', blocks_burst_tagger_0, '0']
+- [digital_chunks_to_symbols_xx_0, '0', blocks_tagged_stream_mux_0, '1']
+- [digital_chunks_to_symbols_xx_0_0, '0', blocks_tagged_stream_mux_0, '0']
+- [digital_crc32_bb_0, '0', blocks_repack_bits_bb_1, '0']
+- [digital_crc32_bb_0, '0', digital_packet_headergenerator_bb_0, '0']
+- [digital_ofdm_carrier_allocator_cvc_0, '0', fft_vxx_0, '0']
+- [digital_ofdm_cyclic_prefixer_0, '0', digital_burst_shaper_xx_0, '0']
+- [digital_packet_headergenerator_bb_0, '0', digital_chunks_to_symbols_xx_0_0, '0']
+- [fft_vxx_0, '0', digital_ofdm_cyclic_prefixer_0, '0']
+- [low_pass_filter_0, '0', blocks_multiply_xx_0, '0']
+- [mmse_resampler_xx_0, '0', low_pass_filter_0, '0']
+- [pad_source_0, out, analog_sig_source_x_0, cmd]
+- [virtual_source_0, '0', mmse_resampler_xx_0, '0']
+- [virtual_source_1, '0', digital_ofdm_carrier_allocator_cvc_0, '0']
+- [virtual_source_2, '0', pad_sink_1, '0']
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.4.0

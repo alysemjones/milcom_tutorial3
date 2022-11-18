@@ -1,0 +1,64 @@
+id: ofdm_tx_hier
+label: OFDM Transmitter Hierarchical
+category: '[RL OFDM DSA]'
+
+parameters:
+-   id: back_pad
+    label: back_pad
+    dtype: raw
+    default: '500'
+    hide: none
+-   id: cent_freq
+    label: cent_freq
+    dtype: real
+    default: '0'
+    hide: none
+-   id: front_pad
+    label: front_pad
+    dtype: raw
+    default: '500'
+    hide: none
+-   id: signal_samp_rate
+    label: signal_samp_rate
+    dtype: real
+    default: 1e6/16
+    hide: none
+-   id: wide_samp_rate
+    label: wide_samp_rate
+    dtype: real
+    default: 20e6
+    hide: none
+
+inputs:
+-   label: cent_freq
+    domain: message
+    dtype: message
+    optional: true
+
+outputs:
+-   label: tx_out
+    dtype: complex
+    vlen: 1
+-   label: tx_bits_out
+    dtype: byte
+    vlen: 1
+    optional: true
+
+templates:
+    imports: 'from ofdm_tx_hier import ofdm_tx_hier  # grc-generated hier_block'
+    make: "ofdm_tx_hier(\n    back_pad=${ back_pad },\n    cent_freq=${ cent_freq\
+        \ },\n    front_pad=${ front_pad },\n    signal_samp_rate=${ signal_samp_rate\
+        \ },\n    wide_samp_rate=${ wide_samp_rate },\n)"
+    callbacks:
+    - set_back_pad(${ back_pad })
+    - set_cent_freq(${ cent_freq })
+    - set_front_pad(${ front_pad })
+    - set_signal_samp_rate(${ signal_samp_rate })
+    - set_wide_samp_rate(${ wide_samp_rate })
+
+documentation: 'Alyse Jones and William "Chris" Headley
+
+    /home/alysemjones/rl_ofdm_dsa/hierarchical/ofdm_tx_hier.py'
+grc_source: /home/alysemjones/rl_ofdm_dsa/hierarchical/ofdm_tx_hier.grc
+
+file_format: 1
