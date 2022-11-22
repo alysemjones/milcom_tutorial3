@@ -22,7 +22,7 @@ options:
     run_options: run
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: USRP OFDM Receiver Hierarchical
+    title: Burst OFDM Receiver Hierarchical
     window_size: (1000,1000)
   states:
     bus_sink: false
@@ -968,26 +968,6 @@ blocks:
     coordinate: [1816, 884.0]
     rotation: 0
     state: true
-- name: pad_source_0
-  id: pad_source
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    label: sig_samps
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_streams: '1'
-    optional: 'False'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [328, 652.0]
-    rotation: 0
-    state: enabled
 - name: pad_source_0_0
   id: pad_source
   parameters:
@@ -1297,6 +1277,19 @@ blocks:
     coordinate: [280, 884.0]
     rotation: 0
     state: enabled
+- name: virtual_source_2
+  id: virtual_source
+  parameters:
+    alias: ''
+    comment: ''
+    stream_id: sig_samps
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [320, 652.0]
+    rotation: 0
+    state: true
 - name: wide_samp_rate
   id: parameter
   parameters:
@@ -1340,8 +1333,6 @@ connections:
 - [fft_vxx_1_0, '0', digital_ofdm_frame_equalizer_vcvc_0_0, '0']
 - [low_pass_filter_0, '0', mmse_resampler_xx_0, '0']
 - [mmse_resampler_xx_0, '0', virtual_sink_0, '0']
-- [pad_source_0, '0', blocks_delay_0, '0']
-- [pad_source_0, '0', digital_ofdm_sync_sc_cfb_0, '0']
 - [pad_source_0_0, '0', blocks_multiply_xx_0, '0']
 - [pad_source_1, out, analog_sig_source_x_0, cmd]
 - [virtual_source_0, '0', fft_vxx_1, '0']
@@ -1350,6 +1341,8 @@ connections:
 - [virtual_source_0_2, '0', fft_vxx_1_0, '0']
 - [virtual_source_1, '0', digital_header_payload_demux_0, header_data]
 - [virtual_source_1, '0', pad_sink_1, in]
+- [virtual_source_2, '0', blocks_delay_0, '0']
+- [virtual_source_2, '0', digital_ofdm_sync_sc_cfb_0, '0']
 
 metadata:
   file_format: 1

@@ -9,7 +9,7 @@ options:
     description: ''
     gen_cmake: 'On'
     gen_linking: dynamic
-    generate_options: no_gui
+    generate_options: qt_gui
     hier_block_src_path: '.:'
     id: ofdm_txrx_only
     max_nouts: '0'
@@ -217,7 +217,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '100'
+    value: '1'
   states:
     bus_sink: false
     bus_source: false
@@ -253,7 +253,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [672, 364.0]
+    coordinate: [672, 420.0]
     rotation: 0
     state: true
 - name: blocks_add_xx_0
@@ -289,8 +289,8 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1672, 564.0]
-    rotation: 0
+    coordinate: [1360, 564.0]
+    rotation: 180
     state: true
 - name: blocks_file_sink_0_0
   id: blocks_file_sink
@@ -307,7 +307,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [480, 556.0]
+    coordinate: [472, 548.0]
     rotation: 0
     state: true
 - name: blocks_head_0
@@ -326,40 +326,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [472, 500.0]
-    rotation: 0
-    state: true
-- name: blocks_null_sink_0
-  id: blocks_null_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    bus_structure_sink: '[[0,],]'
-    comment: ''
-    num_inputs: '1'
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1712, 488.0]
-    rotation: 0
-    state: true
-- name: blocks_null_sink_0_0
-  id: blocks_null_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    bus_structure_sink: '[[0,],]'
-    comment: ''
-    num_inputs: '1'
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [352, 632.0]
     rotation: 0
     state: true
 - name: blocks_tag_gate_0
@@ -400,25 +366,6 @@ blocks:
     coordinate: [688, 500.0]
     rotation: 0
     state: true
-- name: fosphor_qt_sink_c_0
-  id: fosphor_qt_sink_c
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    freq_center: '0'
-    freq_span: wide_samp_rate
-    gui_hint: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    wintype: window.WIN_BLACKMAN_hARRIS
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1040, 388.0]
-    rotation: 0
-    state: disabled
 - name: import_0
   id: import
   parameters:
@@ -545,7 +492,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [88, 484.0]
+    coordinate: [144, 484.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0_0
@@ -642,23 +589,20 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1040, 564.0]
+    coordinate: [1040, 540.0]
     rotation: 0
-    state: disabled
+    state: enabled
 
 connections:
 - [analog_noise_source_x_0, '0', blocks_add_xx_0, '0']
 - [blocks_add_xx_0, '0', blocks_tag_gate_0, '0']
-- [blocks_add_xx_0, '0', fosphor_qt_sink_c_0, '0']
 - [blocks_add_xx_0, '0', qtgui_time_sink_x_0_0, '0']
 - [blocks_head_0, '0', blocks_throttle_0, '0']
 - [blocks_tag_gate_0, '0', ofdm_rx_hier_0, '0']
 - [blocks_throttle_0, '0', blocks_add_xx_0, '1']
 - [ofdm_rx_hier_0, '0', blocks_file_sink_0, '0']
-- [ofdm_rx_hier_0, '0', blocks_null_sink_0, '0']
 - [ofdm_tx_hier_0, '0', blocks_head_0, '0']
 - [ofdm_tx_hier_0, '1', blocks_file_sink_0_0, '0']
-- [ofdm_tx_hier_0, '1', blocks_null_sink_0_0, '0']
 
 metadata:
   file_format: 1

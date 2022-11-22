@@ -22,7 +22,7 @@ options:
     run_options: run
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: USRP OFDM Transmitter Hierarchical
+    title: Burst OFDM Transmitter Hierarchical
     window_size: (1000,1000)
   states:
     bus_sink: false
@@ -813,6 +813,24 @@ blocks:
     coordinate: [1768, 932.0]
     rotation: 0
     state: true
+- name: pad_sink_1
+  id: pad_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    label: tx_bits_out
+    num_streams: '1'
+    optional: 'False'
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [536, 532.0]
+    rotation: 180
+    state: true
 - name: pad_source_0
   id: pad_source
   parameters:
@@ -895,19 +913,6 @@ blocks:
     coordinate: [1768, 676.0]
     rotation: 0
     state: enabled
-- name: virtual_sink_2_0
-  id: virtual_sink
-  parameters:
-    alias: ''
-    comment: ''
-    stream_id: tx_bits_out
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [512, 532.0]
-    rotation: 180
-    state: true
 - name: virtual_source_0
   id: virtual_source
   parameters:
@@ -955,7 +960,7 @@ connections:
 - [fft_vxx_0, '0', digital_ofdm_cyclic_prefixer_0, '0']
 - [pad_source_0, out, pdu_random_pdu_0, generate]
 - [pdu_pdu_to_tagged_stream_0, '0', digital_crc32_bb_0, '0']
-- [pdu_pdu_to_tagged_stream_0, '0', virtual_sink_2_0, '0']
+- [pdu_pdu_to_tagged_stream_0, '0', pad_sink_1, '0']
 - [pdu_random_pdu_0, pdus, pdu_pdu_to_tagged_stream_0, pdus]
 - [virtual_source_0, '0', pad_sink_0, '0']
 - [virtual_source_1, '0', digital_ofdm_carrier_allocator_cvc_0, '0']

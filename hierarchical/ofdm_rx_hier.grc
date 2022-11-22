@@ -1017,7 +1017,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [328, 468.0]
+    coordinate: [336, 476.0]
     rotation: 0
     state: enabled
 - name: signal_samp_rate
