@@ -1,0 +1,2132 @@
+options:
+  parameters:
+    author: Alyse Jones and William "Chris" Headley
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: ofdm_txrx_only
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: run
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: OFDM End-to-End Stream Testing (with GUI)
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 4.0]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: N
+  id: variable
+  parameters:
+    comment: ''
+    value: num_channels*8
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 204.0]
+    rotation: 0
+    state: true
+- name: back_pad
+  id: variable
+  parameters:
+    comment: ''
+    value: num_zeros
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [488, 204.0]
+    rotation: 0
+    state: enabled
+- name: buffer_percentage
+  id: variable
+  parameters:
+    comment: ''
+    value: '0.25'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [504, 332.0]
+    rotation: 0
+    state: true
+- name: cent_freq
+  id: variable
+  parameters:
+    comment: ''
+    value: cent_freq_list[0]+freq_usrp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [400, 268.0]
+    rotation: 0
+    state: enabled
+- name: cent_freq_list
+  id: variable
+  parameters:
+    comment: ''
+    value: '[int(i) for i in np.linspace(-wide_samp_rate/2+signal_samp_rate/2, wide_samp_rate/2-signal_samp_rate/2,
+      num_channels)]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [504, 268.0]
+    rotation: 0
+    state: enabled
+- name: cent_freq_list
+  id: variable
+  parameters:
+    comment: ''
+    value: '[int(i) for i in np.arange(-wide_samp_rate/2, wide_samp_rate/2, wide_samp_rate/num_channels)]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [856, 332.0]
+    rotation: 0
+    state: disabled
+- name: cent_freq_rx
+  id: variable
+  parameters:
+    comment: ''
+    value: -cent_freq_list[0]+freq_usrp
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [400, 332.0]
+    rotation: 0
+    state: enabled
+- name: channel_map
+  id: variable
+  parameters:
+    comment: ''
+    value: '[int(num_channels/2) + i*1 if i < int(num_channels/2) else -int(num_channels/2)+i*1
+      for i in range(num_channels)]'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [632, 332.0]
+    rotation: 0
+    state: true
+- name: fft_len
+  id: variable
+  parameters:
+    comment: ''
+    value: int(64)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [928, 140.0]
+    rotation: 0
+    state: true
+- name: freq_fosphor
+  id: variable
+  parameters:
+    comment: ''
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1112, 268.0]
+    rotation: 0
+    state: true
+- name: freq_usrp
+  id: variable
+  parameters:
+    comment: ''
+    value: 2.35e9
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1072, 204.0]
+    rotation: 0
+    state: true
+- name: front_pad
+  id: variable
+  parameters:
+    comment: ''
+    value: num_zeros
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [400, 204.0]
+    rotation: 0
+    state: enabled
+- name: head_size
+  id: variable
+  parameters:
+    comment: ''
+    value: int((front_pad+back_pad+num_samps)*(signal_samp_rate/(signal_samp_rate))*time_steps)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [528, 140.0]
+    rotation: 0
+    state: enabled
+- name: linear_gain
+  id: variable
+  parameters:
+    comment: ''
+    value: '650'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1016, 268.0]
+    rotation: 0
+    state: true
+- name: noise_volt
+  id: variable
+  parameters:
+    comment: ''
+    value: pow(1.0/(fft_len*2*pow(10.0,snr/10.0)),0.5)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1248, 76.0]
+    rotation: 0
+    state: enabled
+- name: num_channels
+  id: variable
+  parameters:
+    comment: ''
+    value: '8'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 140.0]
+    rotation: 0
+    state: true
+- name: num_data_symbs
+  id: variable
+  parameters:
+    comment: ''
+    value: '7'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [656, 76.0]
+    rotation: 0
+    state: enabled
+- name: num_header_symbs
+  id: variable
+  parameters:
+    comment: ''
+    value: '3'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [520, 76.0]
+    rotation: 0
+    state: enabled
+- name: num_samps
+  id: variable
+  parameters:
+    comment: ''
+    value: num_data_symbs*80+num_header_symbs*80
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [576, 204.0]
+    rotation: 0
+    state: enabled
+- name: num_samps_per_step
+  id: variable
+  parameters:
+    comment: ''
+    value: head_size/time_steps
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [856, 204.0]
+    rotation: 0
+    state: enabled
+- name: num_zeros
+  id: variable
+  parameters:
+    comment: ''
+    value: '1000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [672, 268.0]
+    rotation: 0
+    state: true
+- name: rand_seed
+  id: variable
+  parameters:
+    comment: ''
+    value: int(time.time())
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1024, 76.0]
+    rotation: 0
+    state: true
+- name: rx_gain
+  id: variable
+  parameters:
+    comment: ''
+    value: '35'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [936, 268.0]
+    rotation: 0
+    state: true
+- name: samps_per_symb
+  id: variable
+  parameters:
+    comment: ''
+    value: float(wide_samp_rate/signal_samp_rate)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1360, 76.0]
+    rotation: 0
+    state: true
+- name: signal_samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: wide_samp_rate/num_channels
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [398, 138]
+    rotation: 0
+    state: true
+- name: snr
+  id: variable
+  parameters:
+    comment: ''
+    value: '20'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [856, 140.0]
+    rotation: 0
+    state: true
+- name: taps
+  id: variable
+  parameters:
+    comment: ''
+    value: firdes.low_pass_2(1.0,1,1/num_channels/2,(1/num_channels)*0.1,80,window.WIN_BLACKMAN_HARRIS)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [856, 76.0]
+    rotation: 0
+    state: enabled
+- name: time_steps
+  id: variable
+  parameters:
+    comment: ''
+    value: '100'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [680, 204.0]
+    rotation: 0
+    state: enabled
+- name: tx_gain
+  id: variable
+  parameters:
+    comment: ''
+    value: '35'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [856, 268.0]
+    rotation: 0
+    state: true
+- name: wide_samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: 1e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [399, 77]
+    rotation: 0
+    state: true
+- name: analog_noise_source_x_0
+  id: analog_noise_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: noise_volt
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    noise_type: analog.GR_GAUSSIAN
+    seed: '0'
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [96, 1236.0]
+    rotation: 0
+    state: disabled
+- name: analog_noise_source_x_0_0
+  id: analog_noise_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: noise_volt
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    noise_type: analog.GR_GAUSSIAN
+    seed: '0'
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [936, 612.0]
+    rotation: 0
+    state: enabled
+- name: analog_sig_source_x_0
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '1.0'
+    comment: ''
+    freq: int(cent_freq-freq_usrp)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0.0'
+    samp_rate: wide_samp_rate
+    type: complex
+    waveform: analog.GR_COS_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [744, 868.0]
+    rotation: 0
+    state: enabled
+- name: analog_sig_source_x_0_0
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '2.5'
+    comment: ''
+    freq: cent_freq_list[1]
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0'
+    samp_rate: wide_samp_rate
+    type: complex
+    waveform: analog.GR_COS_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [744, 444.0]
+    rotation: 0
+    state: enabled
+- name: analog_sig_source_x_0_0_0
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '2.5'
+    comment: ''
+    freq: cent_freq_list[2]
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0'
+    samp_rate: wide_samp_rate
+    type: complex
+    waveform: analog.GR_COS_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [744, 580.0]
+    rotation: 0
+    state: enabled
+- name: analog_sig_source_x_0_1
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '1.0'
+    comment: ''
+    freq: int(-cent_freq+freq_usrp)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0.0'
+    samp_rate: wide_samp_rate
+    type: complex
+    waveform: analog.GR_COS_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1240, 1124.0]
+    rotation: 0
+    state: enabled
+- name: blocks_add_xx_0
+  id: blocks_add_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '2'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [360, 1320.0]
+    rotation: 0
+    state: disabled
+- name: blocks_add_xx_1
+  id: blocks_add_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '4'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1120, 720.0]
+    rotation: 0
+    state: enabled
+- name: blocks_complex_to_mag_squared_0
+  id: blocks_complex_to_mag_squared
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    vlen: N
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1216, 1332.0]
+    rotation: 0
+    state: enabled
+- name: blocks_complex_to_mag_squared_0_0
+  id: blocks_complex_to_mag_squared
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    vlen: num_channels
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [992, 1452.0]
+    rotation: 0
+    state: disabled
+- name: blocks_file_sink_0
+  id: blocks_file_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    append: 'False'
+    comment: ''
+    file: ../data/rx_bits.dat
+    type: byte
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1648, 1028.0]
+    rotation: 180
+    state: enabled
+- name: blocks_multiply_const_vxx_0
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    const: linear_gain
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1448, 916.0]
+    rotation: 0
+    state: disabled
+- name: blocks_multiply_const_vxx_1
+  id: blocks_multiply_const_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    const: 1/sqrt(fft_len)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1264, 748.0]
+    rotation: 0
+    state: disabled
+- name: blocks_multiply_xx_0
+  id: blocks_multiply_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '2'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [976, 768.0]
+    rotation: 0
+    state: enabled
+- name: blocks_multiply_xx_0_1
+  id: blocks_multiply_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '2'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1624, 920.0]
+    rotation: 0
+    state: enabled
+- name: blocks_stream_to_vector_0
+  id: blocks_stream_to_vector
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_items: N
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [752, 1336.0]
+    rotation: 0
+    state: enabled
+- name: blocks_streams_to_vector_0
+  id: blocks_streams_to_vector
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_streams: num_channels
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: true
+    bus_source: false
+    bus_structure: null
+    coordinate: [800, 1444.0]
+    rotation: 0
+    state: disabled
+- name: blocks_tagged_stream_align_0
+  id: blocks_tagged_stream_align
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    lengthtagname: burst_start
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [504, 1332.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_0_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport pmt\nimport numpy\
+      \ as np\nfrom gnuradio import gr\nimport time\nimport random\n\n\nclass blk(gr.sync_block):\
+      \  # other base classes are basic_block, decim_block, interp_block\n    \"\"\
+      \"Embedded Python Block example - a simple multiply const\"\"\"\n\n    def __init__(self,num_channels=8,wide_samp_rate=2e6,\
+      \ cent_freqs=[],log_file=None):  # only default arguments here\n        \"\"\
+      \"arguments to this function show up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='Cognitive Engine',   # will show up in\
+      \ GRC\n            in_sig=None,\n            out_sig=None\n        )\n     \
+      \   # if an attribute with the same name as a parameter is found,\n        #\
+      \ a callback is registered (properties work, too).\n        self.num_channels\
+      \ = num_channels\n        self.wide_samp_rate = wide_samp_rate\n        self.cent_freqs\
+      \ = cent_freqs\n        self.log_file = log_file\n        self.samp_rate = int(self.wide_samp_rate/(1e6))\n\
+      \        self.msg_port_name_tx = 'tx_freq'\n        self.msg_port_name_rx =\
+      \ 'rx_freq'\n        self.msg_port_name_int = 'int_cent_freq'\n        self.msg_port_name_int2\
+      \ = 'int2_cent_freq'\n        self.msg_input_sensing = 'sensing_results'\n \
+      \       self.msg_input_packet = 'packet_results'\n        self.msg_input_change_rx\
+      \ = 'rx_handler_psd'\n        #self.msg_input_change_rx2 = 'rx_handler_chan'\n\
+      \        self.message_port_register_out(pmt.intern(self.msg_port_name_tx))\n\
+      \        self.message_port_register_out(pmt.intern(self.msg_port_name_rx))\n\
+      \        self.message_port_register_out(pmt.intern(self.msg_port_name_int))\n\
+      \        self.message_port_register_out(pmt.intern(self.msg_port_name_int2))\n\
+      \        self.message_port_register_in(pmt.intern(self.msg_input_sensing))\n\
+      \        self.set_msg_handler(pmt.intern(self.msg_input_sensing), self.handle_msg_sensing)\n\
+      \        self.message_port_register_in(pmt.intern(self.msg_input_packet))\n\
+      \        self.set_msg_handler(pmt.intern(self.msg_input_packet), self.handle_msg_packet)\n\
+      \        self.message_port_register_in(pmt.intern(self.msg_input_change_rx))\n\
+      \        self.set_msg_handler(pmt.intern(self.msg_input_change_rx), self.handle_msg_rx_freq)\n\
+      \        #self.message_port_register_in(pmt.intern(self.msg_input_change_rx2))\n\
+      \        #self.set_msg_handler(pmt.intern(self.msg_input_change_rx2), self.handle_msg_rx_freq2)\n\
+      \        #self.cent_freqs = np.arange(-int((self.samp_rate/2)+(self.samp_rate/(self.num_channels*2))),int((self.samp_rate/2)+(self.samp_rate/(self.num_channels*2))),self.samp_rate/self.num_channels)\n\
+      \        #self.cent_freqs = self.cent_freqs[1:]\n        print(self.cent_freqs)\n\
+      \        self.position = 0\n        self.count_sensor = 0\n        self.count_packet\
+      \ = 0\n        self.counter = 0\n        self.count = 0\n        self.packet\
+      \ = False\n        self.packet_flag = False\n        self.sensor_flag = False\n\
+      \        self.cent_freq = -500000\n        self.int_freq = -83333\n        self.int2_freq\
+      \ = 83333\n        self.packet_errors = 0\n        self.tot_packet_errors =\
+      \ 0\n        self.sensing_errors = 0\n        self.tot_sensing_errors = 0\n\
+      \        self.pos = []\n        self.int_pos = random.sample(range(0,self.num_channels-1),self.num_channels-1)\n\
+      \        self.int2_pos = random.sample(range(0,self.num_channels-1),self.num_channels-1)\n\
+      \        ### RL Stuff ### \n        self.min_epsilon = 0.001\n        self.max_epsilon\
+      \ = 1\n        self.decay_rate = 0.1\n        self.alpha = 0.9\n        self.gamma\
+      \ = 0.1\n        self.values = [0,1]\n        self.num_values = len(self.values)\n\
+      \        self.time_window = 1\n        self.num_actions = self.num_channels\n\
+      \        self.num_states = self.num_values**(self.num_actions*self.time_window)\n\
+      \        self.epsilon = 0\n        self.policy = np.zeros(self.num_states)\n\
+      \        self.Q = np.zeros((self.num_states, self.num_actions))\n        self.action_space\
+      \ = [*range(self.num_actions)]\n        self.a = 0\n        self.cumulative_reward\
+      \ = 0\n        self.next_state = np.zeros(self.num_actions)\n        self.s_next\
+      \ = 0\n        self.state = np.zeros(self.num_actions)\n        self.s = 0\n\
+      \        self.sensing_errors_list = []\n        self.reward_list = []\n    \
+      \    self.tot_packet_errors_list = []\n        self.epsilon_count = 0\n    \
+      \    self.reward = 0\n        self.cumulative_reward_list = []\n        self.packet_error_list\
+      \ = []\n        self.sensing_error_list = []\n        self.previous_reward =\
+      \ 0\n        self.count_previous = 0\n        self.change = 0\n        self.empty\
+      \ = []\n        self.previous_state = []\n        self.start_time = 0\n    \
+      \    self.time_diff = 0\n        self.time_diff_avg = 0\n        self.time_diff_avg_list\
+      \ = []\n    \n    def handle_msg_sensing(self, msg): \n    \tself.channels =\
+      \ pmt.to_python(msg)\n    \tif self.count == 0:\n    \t   print(self.channels)\n\
+      \    \tself.channels = [0 if i < 2 else 1 for i in self.channels]\n    \tself.count_sensor\
+      \ += 1\n    \tself.sensor_flag = True\n    \tif self.count_sensor < 100*102:\n\
+      \    \t   self.pos = []\n    \t   self.sensing_errors = 0\n    \t   self.packet_errors\
+      \ = 0\n    \t   self.reinforcement_learning()\n\n    def handle_msg_packet(self,\
+      \ msg):\n    \tpacketVal = pmt.to_python(msg)\n    \tself.counter += 1\n   \
+      \ \tif packetVal == False:\n    \t\tself.packet = False\n    \telse:\n    \t\
+      \tself.packet = True\n    \t\tself.count_packet += 1\n    \t\tself.packet_flag\
+      \ = True\n    \t#if self.counter < 1000:\n    \t#    self.change_frequency()\n\
+      \    \t#    PMT_msg_send =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"transmit\"\
+      ), pmt.to_pmt('Send Frame'))\n    \t#    self.message_port_pub(pmt.intern(self.msg_port_name_send),\
+      \ PMT_msg_send)\n    \t    #zmq_socket_packet.send(pmt.serialize_str(pmt.to_pmt('Send\
+      \ Frame')))\n    \t   \n    \t#if self.sensor_flag == True and self.packet_flag\
+      \ == True:\n    \t#       self.check_synch()\n    \n    #def handle_msg_rx_freq2(self,\
+      \ msg):\n    #    self.start_time = time.time()\n        \n    def handle_msg_rx_freq(self,\
+      \ msg):\n        end_time = time.time()\n        self.check_sensing_errors()\n\
+      \        #print(self.pos, self.channels)\n        #print(self.count, self.count_packet,\
+      \ self.counter, self.pos, self.channels, self.packet, self.tot_sensing_errors,\
+      \ self.tot_packet_errors)\n        self.time_diff += end_time - self.start_time\n\
+      \        #print(self.int_pos, self.int2_pos)\n        if self.packet == True:\n\
+      \           self.reward = 1\n        else:\n           self.reward = 0\n   \
+      \     if self.count % 100 == 0:\n           '''\n           if self.count >\
+      \ 100*45 and self.change == 0:\n              if self.cumulative_reward < 95:\n\
+      \                 self.epsilon_count = 0\n                 self.count_previous\
+      \ = 0\n                 self.change = 1\n           '''\n           self.time_diff_avg\
+      \ = self.time_diff/100\n          # print(self.count, self.epsilon, self.count_packet,\
+      \ self.previous_reward, self.cumulative_reward, self.tot_sensing_errors, self.tot_packet_errors,\
+      \ self.time_diff_avg)\n           print(self.count, self.cumulative_reward)\n\
+      \           self.previous_reward = self.cumulative_reward\n           self.cumulative_reward_list.append(self.cumulative_reward)\n\
+      \           self.packet_error_list.append(self.tot_packet_errors)\n        \
+      \   self.sensing_error_list.append(self.tot_sensing_errors)\n           self.time_diff_avg_list.append(self.time_diff_avg)\n\
+      \           self.cumulative_reward = 0\n           self.tot_sensing_errors =\
+      \ 0\n           self.tot_packet_errors = 0\n           self.count_packet = 0\n\
+      \           self.time_diff = 0\n           self.time_diff_avg = 0\n        self.packet_flag\
+      \ = False\n        self.count += 1\n        self.packet = False\n        '''\n\
+      \        if self.count == 100*40:\n           print(self.int_pos, self.int2_pos)\n\
+      \           self.int_pos = random.sample(range(0,self.num_channels-1),self.num_channels-1)\n\
+      \           self.int2_pos = random.sample(range(0,self.num_channels-1),self.num_channels-1)\
+      \    \n           print(self.int_pos, self.int2_pos)\n           self.position\
+      \ = 0      \n        '''  \n        if self.count == 10000:\n           self.save_data()\n\
+      \    \n    def save_data(self):\n        f = open(self.log_file, \"a\")\n  \
+      \      f.write(\"Reward: \" + str(self.cumulative_reward_list) + \"\\n\")\n\
+      \        f.write(\"Sensing Errors: \" + str(self.sensing_error_list) + \"\\\
+      n\")\n        f.write(\"Packet Errors: \" + str(self.packet_error_list) + \"\
+      \\n\")\n        f.write(\"Time diff: \" + str(self.time_diff_avg_list) + \"\\\
+      n\")\n        f.write(\"\\n\")\n        f.close()\n    \n    def check_sensing_errors(self):\n\
+      \        c = 0\n        idx_list = []\n        if self.count != 0:\n       \
+      \ \tfor i in self.pos:\n        \t\tidx = np.where(np.array(self.cent_freqs)\
+      \ == i)[0][0]\n        \t\tidx_list.append(idx)\n        \t\tif self.channels[idx]\
+      \ == 0:\n        \t\t\tself.sensing_errors = 1\n        \t\tif sum(self.channels)\
+      \ > 3:\n        \t\t\tself.sensing_errors = 1\n        \t\tc += 1\n        \t\
+      if (idx_list[1] == idx_list[0]) and self.packet != False:\n        \t    self.packet_errors\
+      \ = 1\n        \tif (idx_list[2] == idx_list[0]) and self.packet != False:\n\
+      \        \t    self.packet_errors = 1\n        \tif sum(self.channels) == 1\
+      \ and self.packet != False:\n        \t    self.packet_errors = 1\n        \t\
+      if (idx_list[1] == idx_list[2]) and (idx_list[0] != idx_list[1]):\n        \t\
+      \    if self.packet != True:\n        \t       self.packet_errors = 1\n    \
+      \    \t    else:\n        \t       self.packet_errors = 0\n        if self.sensing_errors\
+      \ == 1:\n               self.tot_sensing_errors += 1\n        if self.packet_errors\
+      \ == 1:\n               self.tot_packet_errors += 1\n        #print(idx_list,\
+      \ self.packet, self.tot_packet_errors)\n\n    def convertIndexToTuple(self,state):\n\
+      \    \treturn(tuple(int(x) for x in np.base_repr(state, self.num_values, self.num_actions)[-self.num_actions::]))\n\
+      \    \n    def convertTupleToIndex(self,state):\n    \treturn(int(\"\".join(str(x)\
+      \ for x in state), self.num_values))\n    \n    def reset(self):\n    \tfor\
+      \ s in range(self.num_states):\n    \t\tself.policy[s] = random.randrange(0,self.num_channels)\n\
+      \    \n    def decay_epsilon(self,t):\n    \tepsilon = self.min_epsilon + (self.max_epsilon\
+      \ - self.min_epsilon) * np.exp(-self.decay_rate * t)\n    \treturn epsilon\n\
+      \n    def choose_action(self,t):\n    \tp = random.uniform(0,1)\n    \tif self.count\
+      \ % 100 == 0:\n    \t\tself.epsilon = self.decay_epsilon(self.epsilon_count)\n\
+      \    \t\tself.epsilon_count += 1\n    \t#if self.count == 100*20:\n    \t#\t\
+      print(self.count)\n    \t#\tself.epsilon_count == 0\n    \t'''\n    \tif t <=\
+      \ int(self.time_steps*0.25):\n    \t\tepsilon = 0.90\n    \telif t <= int(self.time_steps*0.5)\
+      \ and t > int(self.time_steps*0.25):\n    \t\tepsilon = 0.75\n    \telif t <=\
+      \ int(self.time_steps*0.75) and t > int(self.time_steps*0.5):\n    \t\tepsilon\
+      \ = 0.25\n    \telse:\n    \t\tepsilon = 0.01\n    \t'''\n    \tif p > self.epsilon:\n\
+      \    \t\tif self.count % 100 == 0:\n    \t\t\tself.policy = self.Q.argmax(axis=1)\n\
+      \    \t\ta = self.policy[self.s]\n    \telse:\n    \t\ta = random.choice(list(enumerate(self.cent_freqs)))[0]\n\
+      \    \treturn a\n    \n    def reinforcement_learning(self):\n        if self.count\
+      \ == 0:\n                self.pos.append(int(self.cent_freqs[0]))\n        \
+      \        self.pos.append(int(self.int_freq))\n                self.pos.append(int(self.int2_freq))\n\
+      \        else:\n                self.pos.append(int(self.cent_freq))\n     \
+      \           self.pos.append(int(self.int_freq))\n                self.pos.append(int(self.int2_freq))\n\
+      \        \n        self.cumulative_reward += self.reward\n        self.next_state\
+      \ = [int(x) for x in self.channels]\n        self.s_next = int(self.convertTupleToIndex(self.next_state))\n\
+      \        # update Q matrix\n        self.metric = self.alpha * (self.reward\
+      \ + self.gamma * np.max(self.Q[int(self.s_next), :]) - self.Q[self.s,self.a])\n\
+      \        self.Q[self.s,self.a] += self.metric\n        \t\n        # update\
+      \ state to next state\n        self.state = self.next_state\n        self.s\
+      \ = int(self.convertTupleToIndex(self.state))\n\n        # choose next action\n\
+      \        self.a = int(self.choose_action(self.count))\n        self.cent_freq\
+      \ = self.cent_freqs[self.a]\n        \n        #self.cent_freq = self.cent_freqs[self.position]\n\
+      \        self.int_freq = self.cent_freqs[self.int_pos[self.position]]\n    \
+      \    self.int2_freq = self.cent_freqs[self.int2_pos[self.position]]\n      \
+      \  self.position += 1\n        if self.position == len(self.cent_freqs)-1:\n\
+      \           self.position = 0\n        \n        #self.empty = [i for i,val\
+      \ in enumerate(self.channels) if val==0]\n        #idx = random.choice(self.empty)\n\
+      \        #self.cent_freq = self.cent_freqs[idx]\n        \n        PMT_msg_tx\
+      \ =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(self.cent_freq))\n\
+      \        self.message_port_pub(pmt.intern(self.msg_port_name_tx), PMT_msg_tx)\n\
+      \        PMT_msg_rx =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(-self.cent_freq))\n\
+      \        self.message_port_pub(pmt.intern(self.msg_port_name_rx), PMT_msg_rx)\n\
+      \        PMT_msg_int =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"),\
+      \ pmt.from_float(self.int_freq))\n        self.message_port_pub(pmt.intern(self.msg_port_name_int),\
+      \ PMT_msg_int)\n        PMT_msg_int2 =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"\
+      freq\"), pmt.from_float(self.int2_freq))\n        self.message_port_pub(pmt.intern(self.msg_port_name_int2),\
+      \ PMT_msg_int2)  \n                  \n    def work(self, input_items, output_items):\n\
+      \        return len(input_items[0])\n"
+    affinity: ''
+    alias: ''
+    cent_freqs: cent_freq_list
+    comment: ''
+    log_file: '''../data_logs/results.txt'''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_channels: num_channels
+    wide_samp_rate: wide_samp_rate
+  states:
+    _io_cache: ('Cognitive Engine', 'blk', [('num_channels', '8'), ('wide_samp_rate',
+      '2000000.0'), ('cent_freqs', '[]'), ('log_file', 'None')], [('rx_handler_psd',
+      'message', 1), ('packet_results', 'message', 1), ('sensing_results', 'message',
+      1)], [('int2_cent_freq', 'message', 1), ('int_cent_freq', 'message', 1), ('rx_freq',
+      'message', 1), ('tx_freq', 'message', 1)], 'Embedded Python Block example -
+      a simple multiply const', ['cent_freqs', 'log_file', 'num_channels', 'wide_samp_rate'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [744, 1000.0]
+    rotation: 180
+    state: enabled
+- name: epy_block_1
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\nimport pmt\nimport time\n\nclass blk(gr.sync_block):\
+      \  # other base classes are basic_block, decim_block, interp_block\n    \"\"\
+      \"Embedded Python Block example - a simple multiply const\"\"\"\n\n    def __init__(self,\
+      \ num_chans=8, log_file=None):  # only default arguments here\n        \"\"\"\
+      arguments to this function show up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='Sensing',   # will show up in GRC\n  \
+      \          in_sig=[(np.float32,num_chans)],\n            out_sig=None\n    \
+      \    )\n        # if an attribute with the same name as a parameter is found,\n\
+      \        # a callback is registered (properties work, too).\n        self.num_chans\
+      \ = num_chans\n        self.log_file = log_file\n        self.energy_vect =\
+      \ np.zeros(self.num_chans)\n        self.start_flag = 0\n        self.end_flag\
+      \ = 0\n        self.num_samps = 0\n        self.count = 0\n        self.count_packet_len\
+      \ = 1\n        \n        self.portName = 'energy_vec'\n        self.portName2\
+      \ = 'packet_len_chan'\n        self.message_port_register_out(pmt.intern(self.portName))\n\
+      \        self.message_port_register_out(pmt.intern(self.portName2))   \n   \
+      \ \n    def work(self, input_items, output_items):\n        tagTuple = self.get_tags_in_window(0,\
+      \ 0, len(input_items[0]))\n        if self.count == 0:\n        \topen(self.log_file,\
+      \ 'w').close()\n        start_index = 0\n        start_index_packet = 0\n  \
+      \      end_index = len(input_items[0])\n        for tag in tagTuple:\n     \
+      \       if (pmt.to_python(tag.key) == 'burst_start') and ~start_index:\n   \
+      \             self.energy_vect = np.zeros(self.num_chans)\n                start_index\
+      \ = tag.offset - self.nitems_read(0)\n                self.start_flag = 1\n\
+      \            if (pmt.to_python(tag.key) == 'burst_end') and ~end_index:\n  \
+      \              end_index = tag.offset - self.nitems_read(0)\n              \
+      \  self.end_flag = 1\n            if (pmt.to_python(tag.key) == 'packet_len')\
+      \ and ~start_index:\n                start_index_packet = tag.offset - self.nitems_read(0)\n\
+      \                if self.count_packet_len == self.num_chans:\n             \
+      \      if self.count > 0:\n                        #time.sleep(0.1)\n      \
+      \                  self.message_port_pub(pmt.intern(self.portName2), pmt.to_pmt('change_rx_freq'))\n\
+      \                   #print('hello ' + str(self.count))\n                   #print(self.count_packet_len)\n\
+      \                   self.count_packet_len = 1\n                else:\n     \
+      \              self.count_packet_len += 1\n                             \n \
+      \       if self.start_flag == 1:\n            for i in range(start_index,end_index):\n\
+      \                self.energy_vect += input_items[0][i]\n                self.num_samps\
+      \ += 1\n            \n        if self.end_flag == 1:\n            #print('Num\
+      \ Samps: ' + str(self.num_samps))\n            self.message_port_pub(pmt.intern(self.portName),\
+      \ pmt.to_pmt(self.energy_vect/self.num_samps))\n            #time.sleep(0.001)\n\
+      \            #self.message_port_pub(pmt.intern(self.portName2), pmt.to_pmt('change_rx_freq'))\n\
+      \            '''\n            file1 = open(self.log_file, \"a\")\n         \
+      \   file1.write(\"Count: \" + str(self.count) + \" \\n\")\n            file1.write(\"\
+      Sensing: \" + str(self.energy_vect/self.num_samps) + \" \\n\")\n           \
+      \ file1.write(\"\\n\")\n            file1.close()\n            '''\n       \
+      \     self.start_flag = 0\n            self.end_flag = 0\n            self.num_samps\
+      \ = 0\n            self.count += 1\n        \n        return len(input_items[0])\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    log_file: '''../data_logs/sensing.txt'''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_chans: num_channels
+  states:
+    _io_cache: ('Sensing', 'blk', [('num_chans', '8'), ('log_file', 'None')], [('0',
+      'float', 8)], [('packet_len_chan', 'message', 1), ('energy_vec', 'message',
+      1)], 'Embedded Python Block example - a simple multiply const', ['log_file',
+      'num_chans'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1224, 1440.0]
+    rotation: 0
+    state: disabled
+- name: epy_block_2
+  id: epy_block
+  parameters:
+    N: N
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\nimport pmt\nimport math\n\nclass blk(gr.sync_block):\n\
+      \    def __init__(self, num_chans=4, N=64):\n        gr.sync_block.__init__(\n\
+      \            self,\n            name='PSD Sensing',\n            in_sig=[(np.float32,N)],\n\
+      \            out_sig=None\n        )\n        self.num_chans = num_chans\n \
+      \       self.N = N\n               \n        self.total_samps = 0\n        self.total_epochs\
+      \ = 0  \n        self.start_flag = 0\n        self.fft_count = 0\n         \
+      \       \n        self.portName = 'energy_vec'\n        self.portName2 = 'packet_len_psd'\n\
+      \        self.message_port_register_out(pmt.intern(self.portName))   \n    \
+      \    self.message_port_register_out(pmt.intern(self.portName2))     \n     \
+      \  \n        self.energy_vect = np.zeros(self.num_chans)\n        \n    def\
+      \ work(self, input_items, output_items):\n        total_items = input_items[0].shape[0]\
+      \ * input_items[0].shape[1]\n        self.total_samps += total_items\n     \
+      \   tagTuple = self.get_tags_in_window(0, 0, input_items[0].shape[0])\n\n  \
+      \      tags_found = []\n        if not len(tagTuple) == 0:       \n        \
+      \    for tag in tagTuple: \n                if not pmt.to_python(tag.key) ==\
+      \ 'packet_len':\n                   tag_vect_num = int(input_items[0].shape[0]\
+      \ - ((self.total_samps - tag.offset*self.N)/self.N))\n                   tags_found.append([pmt.to_python(tag.key),\
+      \ tag_vect_num])\n                if (pmt.to_python(tag.key) == 'burst_start')\
+      \ and self.total_epochs > 0:\n                    self.message_port_pub(pmt.intern(self.portName2),\
+      \ pmt.to_pmt('change_rx_freq'))\n                   \n                \n   \
+      \     for k in range(input_items[0].shape[0]):\n            if not len(tags_found)\
+      \ == 0:        \n                if tags_found[0][1] == k and tags_found[0][0]\
+      \ == 'burst_start':                              \n                    self.fft_count\
+      \ = 0\n                    self.start_flag = 1\n                    self.total_epochs\
+      \ += 1\n                    self.energy_vect = np.zeros(self.num_chans)\n  \
+      \                  tags_found.pop(0)\n\n            if self.start_flag == 1:\n\
+      \                chan_vals = input_items[0][k].reshape((self.num_chans, int(self.N/self.num_chans)))\n\
+      \                self.fft_count += 1\n                for kk in range(self.num_chans):\n\
+      \                    self.energy_vect[kk] += np.mean(chan_vals[kk])\n      \
+      \                  \n            if not len(tags_found) == 0:\n            \
+      \    if tags_found[0][1] == k and tags_found[0][0] == 'burst_end':         \
+      \                       \n                    self.start_flag = 0          \
+      \      \n                    #print('Finished Epoch #', self.total_epochs, ',\
+      \ FFTs Calculated: ', self.fft_count)\n                    self.message_port_pub(pmt.intern(self.portName),\
+      \ pmt.to_pmt(self.energy_vect/self.fft_count))\n                    tags_found.pop(0)\
+      \                     \n                                \n        return len(input_items[0])\
+      \                    \n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_chans: num_channels
+  states:
+    _io_cache: ('PSD Sensing', 'blk', [('num_chans', '4'), ('N', '64')], [('0', 'float',
+      64)], [('packet_len_psd', 'message', 1), ('energy_vec', 'message', 1)], '',
+      ['N', 'num_chans'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1424, 1320.0]
+    rotation: 0
+    state: enabled
+- name: fft_vxx_0
+  id: fft_vxx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    fft_size: N
+    forward: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nthreads: '1'
+    shift: 'True'
+    type: complex
+    window: window.blackmanharris(N)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [952, 1300.0]
+    rotation: 0
+    state: enabled
+- name: fosphor_qt_sink_c_0
+  id: fosphor_qt_sink_c
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    freq_center: '0'
+    freq_span: wide_samp_rate
+    gui_hint: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    wintype: window.WIN_BLACKMAN_hARRIS
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1752, 820.0]
+    rotation: 0
+    state: enabled
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: from math import sqrt
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 116.0]
+    rotation: 0
+    state: enabled
+- name: import_0_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: from math import erfc
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 164.0]
+    rotation: 0
+    state: true
+- name: import_0_0_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: from math import log10
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 212.0]
+    rotation: 0
+    state: enabled
+- name: import_0_0_0_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import time
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 260.0]
+    rotation: 0
+    state: enabled
+- name: import_1
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import numpy as np
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 308.0]
+    rotation: 0
+    state: true
+- name: low_pass_filter_0
+  id: low_pass_filter
+  parameters:
+    affinity: ''
+    alias: ''
+    beta: '6.76'
+    comment: ''
+    cutoff_freq: signal_samp_rate/2
+    decim: '1'
+    gain: '1'
+    interp: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: wide_samp_rate
+    type: interp_fir_filter_ccf
+    width: 0.25*signal_samp_rate/2
+    win: window.WIN_HAMMING
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [744, 716.0]
+    rotation: 0
+    state: enabled
+- name: low_pass_filter_0_0
+  id: low_pass_filter
+  parameters:
+    affinity: ''
+    alias: ''
+    beta: '6.76'
+    comment: ''
+    cutoff_freq: signal_samp_rate/2
+    decim: '1'
+    gain: '1'
+    interp: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: wide_samp_rate
+    type: interp_fir_filter_ccf
+    width: 0.25*signal_samp_rate/2
+    win: window.WIN_HAMMING
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1752, 884.0]
+    rotation: 0
+    state: enabled
+- name: mmse_resampler_xx_0
+  id: mmse_resampler_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    phase_shift: '0'
+    resamp_ratio: signal_samp_rate/wide_samp_rate
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [536, 736.0]
+    rotation: 0
+    state: enabled
+- name: mmse_resampler_xx_0_0
+  id: mmse_resampler_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    phase_shift: '0'
+    resamp_ratio: wide_samp_rate/signal_samp_rate
+    type: complex
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [2000, 936.0]
+    rotation: 0
+    state: enabled
+- name: note_0_0_0_0
+  id: note
+  parameters:
+    alias: ''
+    comment: ''
+    note: Tunable Variables
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [488, 20.0]
+    rotation: 0
+    state: true
+- name: note_0_0_1
+  id: note
+  parameters:
+    alias: ''
+    comment: ''
+    note: Fixed Variables
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [936, 20.0]
+    rotation: 0
+    state: true
+- name: note_0_1
+  id: note
+  parameters:
+    alias: ''
+    comment: ''
+    note: Derived Variables
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1288, 20.0]
+    rotation: 0
+    state: true
+- name: ofdm_rx_hier_usrp_0
+  id: ofdm_rx_hier_usrp
+  parameters:
+    affinity: ''
+    alias: ''
+    cent_freq: int(-cent_freq+freq_usrp)
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    signal_samp_rate: signal_samp_rate
+    threshold: '0.96'
+    wide_samp_rate: wide_samp_rate
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1912, 1044.0]
+    rotation: 180
+    state: enabled
+- name: ofdm_tx_hier_usrp_0
+  id: ofdm_tx_hier_usrp
+  parameters:
+    affinity: ''
+    alias: ''
+    back_pad: back_pad
+    buffer_percentage: buffer_percentage
+    comment: ''
+    front_pad: front_pad
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [128, 732.0]
+    rotation: 0
+    state: enabled
+- name: pfb_channelizer_ccf_1_0
+  id: pfb_channelizer_ccf
+  parameters:
+    affinity: ''
+    alias: ''
+    atten: '80'
+    bus_structure_source: ''
+    ch_map: channel_map
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nchans: num_channels
+    osr: '1'
+    samp_delay: '0'
+    taps: taps
+  states:
+    bus_sink: false
+    bus_source: true
+    bus_structure: null
+    coordinate: [504, 1428.0]
+    rotation: 0
+    state: disabled
+- name: uhd_usrp_sink_0
+  id: uhd_usrp_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    ant0: '"TX/RX"'
+    ant1: '"TX/RX"'
+    ant10: '"TX/RX"'
+    ant11: '"TX/RX"'
+    ant12: '"TX/RX"'
+    ant13: '"TX/RX"'
+    ant14: '"TX/RX"'
+    ant15: '"TX/RX"'
+    ant16: '"TX/RX"'
+    ant17: '"TX/RX"'
+    ant18: '"TX/RX"'
+    ant19: '"TX/RX"'
+    ant2: '"TX/RX"'
+    ant20: '"TX/RX"'
+    ant21: '"TX/RX"'
+    ant22: '"TX/RX"'
+    ant23: '"TX/RX"'
+    ant24: '"TX/RX"'
+    ant25: '"TX/RX"'
+    ant26: '"TX/RX"'
+    ant27: '"TX/RX"'
+    ant28: '"TX/RX"'
+    ant29: '"TX/RX"'
+    ant3: '"TX/RX"'
+    ant30: '"TX/RX"'
+    ant31: '"TX/RX"'
+    ant4: '"TX/RX"'
+    ant5: '"TX/RX"'
+    ant6: '"TX/RX"'
+    ant7: '"TX/RX"'
+    ant8: '"TX/RX"'
+    ant9: '"TX/RX"'
+    bw0: '0'
+    bw1: '0'
+    bw10: '0'
+    bw11: '0'
+    bw12: '0'
+    bw13: '0'
+    bw14: '0'
+    bw15: '0'
+    bw16: '0'
+    bw17: '0'
+    bw18: '0'
+    bw19: '0'
+    bw2: '0'
+    bw20: '0'
+    bw21: '0'
+    bw22: '0'
+    bw23: '0'
+    bw24: '0'
+    bw25: '0'
+    bw26: '0'
+    bw27: '0'
+    bw28: '0'
+    bw29: '0'
+    bw3: '0'
+    bw30: '0'
+    bw31: '0'
+    bw4: '0'
+    bw5: '0'
+    bw6: '0'
+    bw7: '0'
+    bw8: '0'
+    bw9: '0'
+    center_freq0: freq_usrp
+    center_freq1: '0'
+    center_freq10: '0'
+    center_freq11: '0'
+    center_freq12: '0'
+    center_freq13: '0'
+    center_freq14: '0'
+    center_freq15: '0'
+    center_freq16: '0'
+    center_freq17: '0'
+    center_freq18: '0'
+    center_freq19: '0'
+    center_freq2: '0'
+    center_freq20: '0'
+    center_freq21: '0'
+    center_freq22: '0'
+    center_freq23: '0'
+    center_freq24: '0'
+    center_freq25: '0'
+    center_freq26: '0'
+    center_freq27: '0'
+    center_freq28: '0'
+    center_freq29: '0'
+    center_freq3: '0'
+    center_freq30: '0'
+    center_freq31: '0'
+    center_freq4: '0'
+    center_freq5: '0'
+    center_freq6: '0'
+    center_freq7: '0'
+    center_freq8: '0'
+    center_freq9: '0'
+    clock_rate: 0e0
+    clock_source0: ''
+    clock_source1: ''
+    clock_source2: ''
+    clock_source3: ''
+    clock_source4: ''
+    clock_source5: ''
+    clock_source6: ''
+    clock_source7: ''
+    comment: ''
+    dev_addr: addr=192.168.2.4
+    dev_args: ''
+    gain0: tx_gain
+    gain1: '0'
+    gain10: '0'
+    gain11: '0'
+    gain12: '0'
+    gain13: '0'
+    gain14: '0'
+    gain15: '0'
+    gain16: '0'
+    gain17: '0'
+    gain18: '0'
+    gain19: '0'
+    gain2: '0'
+    gain20: '0'
+    gain21: '0'
+    gain22: '0'
+    gain23: '0'
+    gain24: '0'
+    gain25: '0'
+    gain26: '0'
+    gain27: '0'
+    gain28: '0'
+    gain29: '0'
+    gain3: '0'
+    gain30: '0'
+    gain31: '0'
+    gain4: '0'
+    gain5: '0'
+    gain6: '0'
+    gain7: '0'
+    gain8: '0'
+    gain9: '0'
+    gain_type0: default
+    gain_type1: default
+    gain_type10: default
+    gain_type11: default
+    gain_type12: default
+    gain_type13: default
+    gain_type14: default
+    gain_type15: default
+    gain_type16: default
+    gain_type17: default
+    gain_type18: default
+    gain_type19: default
+    gain_type2: default
+    gain_type20: default
+    gain_type21: default
+    gain_type22: default
+    gain_type23: default
+    gain_type24: default
+    gain_type25: default
+    gain_type26: default
+    gain_type27: default
+    gain_type28: default
+    gain_type29: default
+    gain_type3: default
+    gain_type30: default
+    gain_type31: default
+    gain_type4: default
+    gain_type5: default
+    gain_type6: default
+    gain_type7: default
+    gain_type8: default
+    gain_type9: default
+    len_tag_name: '""'
+    lo_export0: 'False'
+    lo_export1: 'False'
+    lo_export10: 'False'
+    lo_export11: 'False'
+    lo_export12: 'False'
+    lo_export13: 'False'
+    lo_export14: 'False'
+    lo_export15: 'False'
+    lo_export16: 'False'
+    lo_export17: 'False'
+    lo_export18: 'False'
+    lo_export19: 'False'
+    lo_export2: 'False'
+    lo_export20: 'False'
+    lo_export21: 'False'
+    lo_export22: 'False'
+    lo_export23: 'False'
+    lo_export24: 'False'
+    lo_export25: 'False'
+    lo_export26: 'False'
+    lo_export27: 'False'
+    lo_export28: 'False'
+    lo_export29: 'False'
+    lo_export3: 'False'
+    lo_export30: 'False'
+    lo_export31: 'False'
+    lo_export4: 'False'
+    lo_export5: 'False'
+    lo_export6: 'False'
+    lo_export7: 'False'
+    lo_export8: 'False'
+    lo_export9: 'False'
+    lo_source0: internal
+    lo_source1: internal
+    lo_source10: internal
+    lo_source11: internal
+    lo_source12: internal
+    lo_source13: internal
+    lo_source14: internal
+    lo_source15: internal
+    lo_source16: internal
+    lo_source17: internal
+    lo_source18: internal
+    lo_source19: internal
+    lo_source2: internal
+    lo_source20: internal
+    lo_source21: internal
+    lo_source22: internal
+    lo_source23: internal
+    lo_source24: internal
+    lo_source25: internal
+    lo_source26: internal
+    lo_source27: internal
+    lo_source28: internal
+    lo_source29: internal
+    lo_source3: internal
+    lo_source30: internal
+    lo_source31: internal
+    lo_source4: internal
+    lo_source5: internal
+    lo_source6: internal
+    lo_source7: internal
+    lo_source8: internal
+    lo_source9: internal
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nchan: '1'
+    num_mboards: '1'
+    otw: ''
+    samp_rate: wide_samp_rate
+    sd_spec0: ''
+    sd_spec1: ''
+    sd_spec2: ''
+    sd_spec3: ''
+    sd_spec4: ''
+    sd_spec5: ''
+    sd_spec6: ''
+    sd_spec7: ''
+    show_lo_controls: 'False'
+    start_time: '-1.0'
+    stream_args: ''
+    stream_chans: '[]'
+    sync: sync
+    time_source0: ''
+    time_source1: ''
+    time_source2: ''
+    time_source3: ''
+    time_source4: ''
+    time_source5: ''
+    time_source6: ''
+    time_source7: ''
+    type: fc32
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1520, 692.0]
+    rotation: 0
+    state: disabled
+- name: uhd_usrp_source_0
+  id: uhd_usrp_source
+  parameters:
+    affinity: ''
+    alias: ''
+    ant0: '"RX2"'
+    ant1: '"RX2"'
+    ant10: '"RX2"'
+    ant11: '"RX2"'
+    ant12: '"RX2"'
+    ant13: '"RX2"'
+    ant14: '"RX2"'
+    ant15: '"RX2"'
+    ant16: '"RX2"'
+    ant17: '"RX2"'
+    ant18: '"RX2"'
+    ant19: '"RX2"'
+    ant2: '"RX2"'
+    ant20: '"RX2"'
+    ant21: '"RX2"'
+    ant22: '"RX2"'
+    ant23: '"RX2"'
+    ant24: '"RX2"'
+    ant25: '"RX2"'
+    ant26: '"RX2"'
+    ant27: '"RX2"'
+    ant28: '"RX2"'
+    ant29: '"RX2"'
+    ant3: '"RX2"'
+    ant30: '"RX2"'
+    ant31: '"RX2"'
+    ant4: '"RX2"'
+    ant5: '"RX2"'
+    ant6: '"RX2"'
+    ant7: '"RX2"'
+    ant8: '"RX2"'
+    ant9: '"RX2"'
+    bw0: '0'
+    bw1: '0'
+    bw10: '0'
+    bw11: '0'
+    bw12: '0'
+    bw13: '0'
+    bw14: '0'
+    bw15: '0'
+    bw16: '0'
+    bw17: '0'
+    bw18: '0'
+    bw19: '0'
+    bw2: '0'
+    bw20: '0'
+    bw21: '0'
+    bw22: '0'
+    bw23: '0'
+    bw24: '0'
+    bw25: '0'
+    bw26: '0'
+    bw27: '0'
+    bw28: '0'
+    bw29: '0'
+    bw3: '0'
+    bw30: '0'
+    bw31: '0'
+    bw4: '0'
+    bw5: '0'
+    bw6: '0'
+    bw7: '0'
+    bw8: '0'
+    bw9: '0'
+    center_freq0: freq_usrp
+    center_freq1: '0'
+    center_freq10: '0'
+    center_freq11: '0'
+    center_freq12: '0'
+    center_freq13: '0'
+    center_freq14: '0'
+    center_freq15: '0'
+    center_freq16: '0'
+    center_freq17: '0'
+    center_freq18: '0'
+    center_freq19: '0'
+    center_freq2: '0'
+    center_freq20: '0'
+    center_freq21: '0'
+    center_freq22: '0'
+    center_freq23: '0'
+    center_freq24: '0'
+    center_freq25: '0'
+    center_freq26: '0'
+    center_freq27: '0'
+    center_freq28: '0'
+    center_freq29: '0'
+    center_freq3: '0'
+    center_freq30: '0'
+    center_freq31: '0'
+    center_freq4: '0'
+    center_freq5: '0'
+    center_freq6: '0'
+    center_freq7: '0'
+    center_freq8: '0'
+    center_freq9: '0'
+    clock_rate: 0e0
+    clock_source0: ''
+    clock_source1: ''
+    clock_source2: ''
+    clock_source3: ''
+    clock_source4: ''
+    clock_source5: ''
+    clock_source6: ''
+    clock_source7: ''
+    comment: ''
+    dc_offs0: 0+0j
+    dc_offs1: 0+0j
+    dc_offs10: 0+0j
+    dc_offs11: 0+0j
+    dc_offs12: 0+0j
+    dc_offs13: 0+0j
+    dc_offs14: 0+0j
+    dc_offs15: 0+0j
+    dc_offs16: 0+0j
+    dc_offs17: 0+0j
+    dc_offs18: 0+0j
+    dc_offs19: 0+0j
+    dc_offs2: 0+0j
+    dc_offs20: 0+0j
+    dc_offs21: 0+0j
+    dc_offs22: 0+0j
+    dc_offs23: 0+0j
+    dc_offs24: 0+0j
+    dc_offs25: 0+0j
+    dc_offs26: 0+0j
+    dc_offs27: 0+0j
+    dc_offs28: 0+0j
+    dc_offs29: 0+0j
+    dc_offs3: 0+0j
+    dc_offs30: 0+0j
+    dc_offs31: 0+0j
+    dc_offs4: 0+0j
+    dc_offs5: 0+0j
+    dc_offs6: 0+0j
+    dc_offs7: 0+0j
+    dc_offs8: 0+0j
+    dc_offs9: 0+0j
+    dc_offs_enb0: default
+    dc_offs_enb1: default
+    dc_offs_enb10: default
+    dc_offs_enb11: default
+    dc_offs_enb12: default
+    dc_offs_enb13: default
+    dc_offs_enb14: default
+    dc_offs_enb15: default
+    dc_offs_enb16: default
+    dc_offs_enb17: default
+    dc_offs_enb18: default
+    dc_offs_enb19: default
+    dc_offs_enb2: default
+    dc_offs_enb20: default
+    dc_offs_enb21: default
+    dc_offs_enb22: default
+    dc_offs_enb23: default
+    dc_offs_enb24: default
+    dc_offs_enb25: default
+    dc_offs_enb26: default
+    dc_offs_enb27: default
+    dc_offs_enb28: default
+    dc_offs_enb29: default
+    dc_offs_enb3: default
+    dc_offs_enb30: default
+    dc_offs_enb31: default
+    dc_offs_enb4: default
+    dc_offs_enb5: default
+    dc_offs_enb6: default
+    dc_offs_enb7: default
+    dc_offs_enb8: default
+    dc_offs_enb9: default
+    dev_addr: addr=192.168.1.4
+    dev_args: ''
+    gain0: rx_gain
+    gain1: '0'
+    gain10: '0'
+    gain11: '0'
+    gain12: '0'
+    gain13: '0'
+    gain14: '0'
+    gain15: '0'
+    gain16: '0'
+    gain17: '0'
+    gain18: '0'
+    gain19: '0'
+    gain2: '0'
+    gain20: '0'
+    gain21: '0'
+    gain22: '0'
+    gain23: '0'
+    gain24: '0'
+    gain25: '0'
+    gain26: '0'
+    gain27: '0'
+    gain28: '0'
+    gain29: '0'
+    gain3: '0'
+    gain30: '0'
+    gain31: '0'
+    gain4: '0'
+    gain5: '0'
+    gain6: '0'
+    gain7: '0'
+    gain8: '0'
+    gain9: '0'
+    gain_type0: default
+    gain_type1: default
+    gain_type10: default
+    gain_type11: default
+    gain_type12: default
+    gain_type13: default
+    gain_type14: default
+    gain_type15: default
+    gain_type16: default
+    gain_type17: default
+    gain_type18: default
+    gain_type19: default
+    gain_type2: default
+    gain_type20: default
+    gain_type21: default
+    gain_type22: default
+    gain_type23: default
+    gain_type24: default
+    gain_type25: default
+    gain_type26: default
+    gain_type27: default
+    gain_type28: default
+    gain_type29: default
+    gain_type3: default
+    gain_type30: default
+    gain_type31: default
+    gain_type4: default
+    gain_type5: default
+    gain_type6: default
+    gain_type7: default
+    gain_type8: default
+    gain_type9: default
+    iq_imbal0: 0+0j
+    iq_imbal1: 0+0j
+    iq_imbal10: 0+0j
+    iq_imbal11: 0+0j
+    iq_imbal12: 0+0j
+    iq_imbal13: 0+0j
+    iq_imbal14: 0+0j
+    iq_imbal15: 0+0j
+    iq_imbal16: 0+0j
+    iq_imbal17: 0+0j
+    iq_imbal18: 0+0j
+    iq_imbal19: 0+0j
+    iq_imbal2: 0+0j
+    iq_imbal20: 0+0j
+    iq_imbal21: 0+0j
+    iq_imbal22: 0+0j
+    iq_imbal23: 0+0j
+    iq_imbal24: 0+0j
+    iq_imbal25: 0+0j
+    iq_imbal26: 0+0j
+    iq_imbal27: 0+0j
+    iq_imbal28: 0+0j
+    iq_imbal29: 0+0j
+    iq_imbal3: 0+0j
+    iq_imbal30: 0+0j
+    iq_imbal31: 0+0j
+    iq_imbal4: 0+0j
+    iq_imbal5: 0+0j
+    iq_imbal6: 0+0j
+    iq_imbal7: 0+0j
+    iq_imbal8: 0+0j
+    iq_imbal9: 0+0j
+    iq_imbal_enb0: default
+    iq_imbal_enb1: default
+    iq_imbal_enb10: default
+    iq_imbal_enb11: default
+    iq_imbal_enb12: default
+    iq_imbal_enb13: default
+    iq_imbal_enb14: default
+    iq_imbal_enb15: default
+    iq_imbal_enb16: default
+    iq_imbal_enb17: default
+    iq_imbal_enb18: default
+    iq_imbal_enb19: default
+    iq_imbal_enb2: default
+    iq_imbal_enb20: default
+    iq_imbal_enb21: default
+    iq_imbal_enb22: default
+    iq_imbal_enb23: default
+    iq_imbal_enb24: default
+    iq_imbal_enb25: default
+    iq_imbal_enb26: default
+    iq_imbal_enb27: default
+    iq_imbal_enb28: default
+    iq_imbal_enb29: default
+    iq_imbal_enb3: default
+    iq_imbal_enb30: default
+    iq_imbal_enb31: default
+    iq_imbal_enb4: default
+    iq_imbal_enb5: default
+    iq_imbal_enb6: default
+    iq_imbal_enb7: default
+    iq_imbal_enb8: default
+    iq_imbal_enb9: default
+    lo_export0: 'False'
+    lo_export1: 'False'
+    lo_export10: 'False'
+    lo_export11: 'False'
+    lo_export12: 'False'
+    lo_export13: 'False'
+    lo_export14: 'False'
+    lo_export15: 'False'
+    lo_export16: 'False'
+    lo_export17: 'False'
+    lo_export18: 'False'
+    lo_export19: 'False'
+    lo_export2: 'False'
+    lo_export20: 'False'
+    lo_export21: 'False'
+    lo_export22: 'False'
+    lo_export23: 'False'
+    lo_export24: 'False'
+    lo_export25: 'False'
+    lo_export26: 'False'
+    lo_export27: 'False'
+    lo_export28: 'False'
+    lo_export29: 'False'
+    lo_export3: 'False'
+    lo_export30: 'False'
+    lo_export31: 'False'
+    lo_export4: 'False'
+    lo_export5: 'False'
+    lo_export6: 'False'
+    lo_export7: 'False'
+    lo_export8: 'False'
+    lo_export9: 'False'
+    lo_source0: internal
+    lo_source1: internal
+    lo_source10: internal
+    lo_source11: internal
+    lo_source12: internal
+    lo_source13: internal
+    lo_source14: internal
+    lo_source15: internal
+    lo_source16: internal
+    lo_source17: internal
+    lo_source18: internal
+    lo_source19: internal
+    lo_source2: internal
+    lo_source20: internal
+    lo_source21: internal
+    lo_source22: internal
+    lo_source23: internal
+    lo_source24: internal
+    lo_source25: internal
+    lo_source26: internal
+    lo_source27: internal
+    lo_source28: internal
+    lo_source29: internal
+    lo_source3: internal
+    lo_source30: internal
+    lo_source31: internal
+    lo_source4: internal
+    lo_source5: internal
+    lo_source6: internal
+    lo_source7: internal
+    lo_source8: internal
+    lo_source9: internal
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    nchan: '1'
+    num_mboards: '1'
+    otw: ''
+    rx_agc0: Disabled
+    rx_agc1: Default
+    rx_agc10: Default
+    rx_agc11: Default
+    rx_agc12: Default
+    rx_agc13: Default
+    rx_agc14: Default
+    rx_agc15: Default
+    rx_agc16: Default
+    rx_agc17: Default
+    rx_agc18: Default
+    rx_agc19: Default
+    rx_agc2: Default
+    rx_agc20: Default
+    rx_agc21: Default
+    rx_agc22: Default
+    rx_agc23: Default
+    rx_agc24: Default
+    rx_agc25: Default
+    rx_agc26: Default
+    rx_agc27: Default
+    rx_agc28: Default
+    rx_agc29: Default
+    rx_agc3: Default
+    rx_agc30: Default
+    rx_agc31: Default
+    rx_agc4: Default
+    rx_agc5: Default
+    rx_agc6: Default
+    rx_agc7: Default
+    rx_agc8: Default
+    rx_agc9: Default
+    samp_rate: wide_samp_rate
+    sd_spec0: ''
+    sd_spec1: ''
+    sd_spec2: ''
+    sd_spec3: ''
+    sd_spec4: ''
+    sd_spec5: ''
+    sd_spec6: ''
+    sd_spec7: ''
+    show_lo_controls: 'False'
+    start_time: '-1.0'
+    stream_args: ''
+    stream_chans: '[]'
+    sync: sync
+    time_source0: ''
+    time_source1: ''
+    time_source2: ''
+    time_source3: ''
+    time_source4: ''
+    time_source5: ''
+    time_source6: ''
+    time_source7: ''
+    type: fc32
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1216, 868.0]
+    rotation: 0
+    state: disabled
+- name: virtual_sink_0
+  id: virtual_sink
+  parameters:
+    alias: ''
+    comment: ''
+    stream_id: sensing_stream
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1008, 868.0]
+    rotation: 180
+    state: enabled
+- name: virtual_source_0
+  id: virtual_source
+  parameters:
+    alias: ''
+    comment: ''
+    stream_id: sensing_stream
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [72, 1348.0]
+    rotation: 0
+    state: enabled
+
+connections:
+- [analog_noise_source_x_0, '0', blocks_add_xx_0, '0']
+- [analog_noise_source_x_0_0, '0', blocks_add_xx_1, '3']
+- [analog_sig_source_x_0, '0', blocks_multiply_xx_0, '1']
+- [analog_sig_source_x_0_0, '0', blocks_add_xx_1, '0']
+- [analog_sig_source_x_0_0_0, '0', blocks_add_xx_1, '1']
+- [analog_sig_source_x_0_1, '0', blocks_multiply_xx_0_1, '1']
+- [blocks_add_xx_0, '0', blocks_tagged_stream_align_0, '0']
+- [blocks_add_xx_0, '0', pfb_channelizer_ccf_1_0, '0']
+- [blocks_add_xx_1, '0', blocks_multiply_const_vxx_1, '0']
+- [blocks_add_xx_1, '0', blocks_multiply_xx_0_1, '0']
+- [blocks_add_xx_1, '0', virtual_sink_0, '0']
+- [blocks_complex_to_mag_squared_0, '0', epy_block_2, '0']
+- [blocks_complex_to_mag_squared_0_0, '0', epy_block_1, '0']
+- [blocks_multiply_const_vxx_0, '0', blocks_multiply_xx_0_1, '0']
+- [blocks_multiply_const_vxx_0, '0', fosphor_qt_sink_c_0, '0']
+- [blocks_multiply_const_vxx_1, '0', uhd_usrp_sink_0, '0']
+- [blocks_multiply_const_vxx_1, '0', virtual_sink_0, '0']
+- [blocks_multiply_xx_0, '0', blocks_add_xx_1, '2']
+- [blocks_multiply_xx_0_1, '0', low_pass_filter_0_0, '0']
+- [blocks_stream_to_vector_0, '0', fft_vxx_0, '0']
+- [blocks_streams_to_vector_0, '0', blocks_complex_to_mag_squared_0_0, '0']
+- [blocks_tagged_stream_align_0, '0', blocks_stream_to_vector_0, '0']
+- [epy_block_0_0, int2_cent_freq, analog_sig_source_x_0_0_0, cmd]
+- [epy_block_0_0, int_cent_freq, analog_sig_source_x_0_0, cmd]
+- [epy_block_0_0, rx_freq, analog_sig_source_x_0_1, cmd]
+- [epy_block_0_0, tx_freq, analog_sig_source_x_0, cmd]
+- [epy_block_0_0, tx_freq, ofdm_tx_hier_usrp_0, send_burst]
+- [epy_block_1, energy_vec, epy_block_0_0, sensing_results]
+- [epy_block_1, packet_len_chan, epy_block_0_0, rx_handler_psd]
+- [epy_block_2, energy_vec, epy_block_0_0, sensing_results]
+- [epy_block_2, packet_len_psd, epy_block_0_0, rx_handler_psd]
+- [fft_vxx_0, '0', blocks_complex_to_mag_squared_0, '0']
+- [low_pass_filter_0, '0', blocks_multiply_xx_0, '0']
+- [low_pass_filter_0_0, '0', mmse_resampler_xx_0_0, '0']
+- [mmse_resampler_xx_0, '0', low_pass_filter_0, '0']
+- [mmse_resampler_xx_0_0, '0', ofdm_rx_hier_usrp_0, '0']
+- [ofdm_rx_hier_usrp_0, '0', blocks_file_sink_0, '0']
+- [ofdm_rx_hier_usrp_0, packet_data, epy_block_0_0, packet_results]
+- [ofdm_tx_hier_usrp_0, '0', mmse_resampler_xx_0, '0']
+- [pfb_channelizer_ccf_1_0, '8', blocks_streams_to_vector_0, '8']
+- [virtual_source_0, '0', blocks_add_xx_0, '1']
+- [virtual_source_0, '0', blocks_tagged_stream_align_0, '0']
+- [virtual_source_0, '0', pfb_channelizer_ccf_1_0, '0']
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.4.0
