@@ -428,7 +428,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [208, 420.0]
+    coordinate: [184, 580.0]
     rotation: 180
     state: true
 - name: blocks_multiply_xx_0
@@ -753,41 +753,41 @@ blocks:
     coordinate: [1288, 20.0]
     rotation: 0
     state: true
-- name: ofdm_rx_hier_usrp_0
-  id: ofdm_rx_hier_usrp
+- name: ofdm_rx_hier_tutorial_0
+  id: ofdm_rx_hier_tutorial
   parameters:
     affinity: ''
     alias: ''
-    cent_freq: cent_freq
+    cent_freq: 0e6
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    signal_samp_rate: signal_samp_rate
-    threshold: '0.95'
-    wide_samp_rate: wide_samp_rate
+    signal_samp_rate: 125e3
+    threshold: '0.96'
+    wide_samp_rate: 125e3
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1416, 524.0]
+    coordinate: [1408, 524.0]
     rotation: 0
     state: true
-- name: ofdm_tx_hier_usrp_0
-  id: ofdm_tx_hier_usrp
+- name: ofdm_tx_hier_usrp_tutorial_0
+  id: ofdm_tx_hier_usrp_tutorial
   parameters:
     affinity: ''
     alias: ''
-    back_pad: back_pad
-    buffer_percentage: '0.1'
+    back_pad: '500'
+    buffer_percentage: '0.25'
     comment: ''
-    front_pad: front_pad
+    front_pad: '500'
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [112, 500.0]
+    coordinate: [88, 500.0]
     rotation: 0
     state: true
 - name: pfb_channelizer_ccf_1_0
@@ -946,18 +946,18 @@ connections:
 - [blocks_complex_to_mag_squared_0_0, '0', epy_block_1, '0']
 - [blocks_multiply_xx_0, '0', blocks_add_xx_0, '1']
 - [blocks_streams_to_vector_0, '0', blocks_complex_to_mag_squared_0_0, '0']
-- [blocks_tag_gate_0, '0', ofdm_rx_hier_usrp_0, '0']
+- [blocks_tag_gate_0, '0', ofdm_rx_hier_tutorial_0, '0']
 - [epy_block_0, int_cent_freq, analog_sig_source_x_0_0, cmd]
-- [epy_block_0, rx_cent_freq, ofdm_rx_hier_usrp_0, cent_freq]
+- [epy_block_0, rx_cent_freq, ofdm_rx_hier_tutorial_0, cent_freq]
 - [epy_block_0, tx_cent_freq, analog_sig_source_x_0, cmd]
-- [epy_block_0, tx_cent_freq, ofdm_tx_hier_usrp_0, send_burst]
+- [epy_block_0, tx_cent_freq, ofdm_tx_hier_usrp_tutorial_0, send_burst]
 - [epy_block_1, energy_vec, epy_block_0, sensing_results]
 - [low_pass_filter_0, '0', blocks_multiply_xx_0, '0']
 - [mmse_resampler_xx_0, '0', low_pass_filter_0, '0']
-- [ofdm_rx_hier_usrp_0, '0', blocks_file_sink_0, '0']
-- [ofdm_rx_hier_usrp_0, packet_data, epy_block_0, packet_results]
-- [ofdm_tx_hier_usrp_0, '0', mmse_resampler_xx_0, '0']
-- [ofdm_tx_hier_usrp_0, '1', blocks_file_sink_0_0, '0']
+- [ofdm_rx_hier_tutorial_0, '0', blocks_file_sink_0, '0']
+- [ofdm_rx_hier_tutorial_0, packet_data, epy_block_0, packet_results]
+- [ofdm_tx_hier_usrp_tutorial_0, '0', mmse_resampler_xx_0, '0']
+- [ofdm_tx_hier_usrp_tutorial_0, '1', blocks_file_sink_0_0, '0']
 - [pfb_channelizer_ccf_1_0, '8', blocks_streams_to_vector_0, '8']
 - [virtual_source_0_0, '0', pfb_channelizer_ccf_1_0, '0']
 
