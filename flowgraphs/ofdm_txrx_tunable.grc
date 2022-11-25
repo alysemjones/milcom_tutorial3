@@ -430,8 +430,8 @@ blocks:
       \        self.message_port_register_in(pmt.intern(self.msg_input_packet))\n\
       \        self.set_msg_handler(pmt.intern(self.msg_input_packet), self.handle_msg_packet)\n\
       \        self.start_time = time.time()\n\n    def handle_msg_packet(self, msg):\n\
-      \    \t# record packet results from the receiver here\n\n    \t# transmit again\
-      \ when the following conditions are met\n    \tif self.count == 0 or self.packet\
+      \    \t# record packet results from the receiver here\n\t\t\n    \t# transmit\
+      \ again when the following conditions are met\n    \tif self.count == 0 or self.packet\
       \ == True or (time.time()-self.start_time > 0.05):\n    \t\tself.control_freq()\
       \ # decides the next action(s)\n    \t\tself.count += 1\n    \t\tself.start_time\
       \ = time.time()\n    \n    def control_freq(self):\n    \tif self.count < self.time_steps:\n\
