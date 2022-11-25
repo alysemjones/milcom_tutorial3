@@ -35,7 +35,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.msg_port_name_rx = 'rx_freq'
         self.msg_port_name_int = 'int_cent_freq'
         self.msg_port_name_int2 = 'int2_cent_freq'
-        #self.msg_port_name_reward = 'reward'
         self.msg_input_sensing = 'sensing_results'
         self.msg_input_packet = 'packet_results'
         self.msg_input_change_rx = 'rx_handler_psd'
@@ -44,7 +43,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.message_port_register_out(pmt.intern(self.msg_port_name_rx))
         self.message_port_register_out(pmt.intern(self.msg_port_name_int))
         self.message_port_register_out(pmt.intern(self.msg_port_name_int2))
-        #self.message_port_register_out(pmt.intern(self.msg_port_name_reward))
         self.message_port_register_in(pmt.intern(self.msg_input_sensing))
         self.set_msg_handler(pmt.intern(self.msg_input_sensing), self.handle_msg_sensing)
         self.message_port_register_in(pmt.intern(self.msg_input_packet))
@@ -77,7 +75,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         ### RL Stuff ### 
         self.min_epsilon = 0.001
         self.max_epsilon = 1
-        self.decay_rate = 0.085
+        self.decay_rate = 0.1
         self.alpha = 0.9
         self.gamma = 0.1
         self.values = [0,1]
@@ -117,7 +115,8 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     	self.channels = pmt.to_python(msg)
     	if self.count == 0:
     	   print(self.channels)
-    	self.channels = [0 if i < 2 else 1 for i in self.channels]
+    	#print(self.channels)
+    	self.channels = [0 if i < 20 else 1 for i in self.channels]
     	self.count_sensor += 1
     	self.sensor_flag = True
     	if self.count_sensor < 100*102:
@@ -153,7 +152,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         #print(self.pos, self.channels)
         #print(self.count, self.count_packet, self.counter, self.pos, self.channels, self.packet, self.tot_sensing_errors, self.tot_packet_errors)
         self.time_diff += end_time - self.start_time
-        #print(self.int_pos, self.int2_pos)
         if self.packet == True:
            self.reward = 1
         else:
@@ -166,8 +164,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
                  self.count_previous = 0
                  self.change = 1
            '''
-           #PMT_msg_reward =  pmt.dict_add(pmt.make_dict(), pmt.intern("reward"), pmt.from_float(100-self.cumulative_reward))
-           #self.message_port_pub(pmt.intern(self.msg_port_name_reward), PMT_msg_reward)  
            self.time_diff_avg = self.time_diff/100
            print(self.count, self.epsilon, self.count_packet, self.previous_reward, self.cumulative_reward, self.tot_sensing_errors, self.tot_packet_errors, self.time_diff_avg)
            print(self.count, self.cumulative_reward)
@@ -300,10 +296,8 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.cent_freq = self.cent_freqs[self.a]
         
         #self.cent_freq = self.cent_freqs[self.position]
-        #self.int_freq = self.cent_freqs[self.int_pos[self.position]]
-        #self.int2_freq = self.cent_freqs[self.int2_pos[self.position]]
-        self.int_freq = self.cent_freqs[3]
-        self.int2_freq = self.cent_freqs[self.position]
+        self.int_freq = self.cent_freqs[self.int_pos[self.position]]
+        self.int2_freq = self.cent_freqs[self.int2_pos[self.position]]
         self.position += 1
         if self.position == len(self.cent_freqs)-1:
            self.position = 0
