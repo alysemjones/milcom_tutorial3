@@ -738,21 +738,21 @@ blocks:
       \ += 1\n    \t\tself.packet_flag = True\n        \n    def handle_msg_rx_freq(self,\
       \ msg):\n        end_time = time.time()\n        self.check_sensing_errors()\n\
       \        self.time_diff += end_time - self.start_time\n        \n        # decide\
-      \ reward here\n\n           \n        if self.count % 100 == 0:\n          \
-      \ self.time_diff_avg = self.time_diff/100\n          # print(self.count, self.epsilon,\
-      \ self.count_packet, self.previous_reward, self.cumulative_reward, self.tot_sensing_errors,\
-      \ self.tot_packet_errors, self.time_diff_avg)\n           print(self.count,\
-      \ self.cumulative_reward)\n           self.previous_reward = self.cumulative_reward\n\
-      \           self.cumulative_reward_list.append(self.cumulative_reward)\n   \
-      \        self.packet_error_list.append(self.tot_packet_errors)\n           self.sensing_error_list.append(self.tot_sensing_errors)\n\
-      \           self.time_diff_avg_list.append(self.time_diff_avg)\n           self.cumulative_reward\
-      \ = 0\n           self.tot_sensing_errors = 0\n           self.tot_packet_errors\
-      \ = 0\n           self.count_packet = 0\n           self.time_diff = 0\n   \
-      \        self.time_diff_avg = 0\n        self.packet_flag = False\n        self.count\
-      \ += 1\n        self.packet = False\n        if self.count == 10000:\n     \
-      \      self.save_data()\n    \n    def save_data(self):\n        f = open(self.log_file,\
-      \ \"a\")\n        f.write(\"Reward: \" + str(self.cumulative_reward_list) +\
-      \ \"\\n\")\n        f.write(\"Sensing Errors: \" + str(self.sensing_error_list)\
+      \ reward here\n        \n           \n        if self.count % 100 == 0:\n  \
+      \         self.time_diff_avg = self.time_diff/100\n          # print(self.count,\
+      \ self.epsilon, self.count_packet, self.previous_reward, self.cumulative_reward,\
+      \ self.tot_sensing_errors, self.tot_packet_errors, self.time_diff_avg)\n   \
+      \        print(self.count, self.cumulative_reward)\n           self.previous_reward\
+      \ = self.cumulative_reward\n           self.cumulative_reward_list.append(self.cumulative_reward)\n\
+      \           self.packet_error_list.append(self.tot_packet_errors)\n        \
+      \   self.sensing_error_list.append(self.tot_sensing_errors)\n           self.time_diff_avg_list.append(self.time_diff_avg)\n\
+      \           self.cumulative_reward = 0\n           self.tot_sensing_errors =\
+      \ 0\n           self.tot_packet_errors = 0\n           self.count_packet = 0\n\
+      \           self.time_diff = 0\n           self.time_diff_avg = 0\n        self.packet_flag\
+      \ = False\n        self.count += 1\n        self.packet = False\n        if\
+      \ self.count == 10000:\n           self.save_data()\n    \n    def save_data(self):\n\
+      \        f = open(self.log_file, \"a\")\n        f.write(\"Reward: \" + str(self.cumulative_reward_list)\
+      \ + \"\\n\")\n        f.write(\"Sensing Errors: \" + str(self.sensing_error_list)\
       \ + \"\\n\")\n        f.write(\"Packet Errors: \" + str(self.packet_error_list)\
       \ + \"\\n\")\n        f.write(\"Time diff: \" + str(self.time_diff_avg_list)\
       \ + \"\\n\")\n        f.write(\"\\n\")\n        f.close()\n    \n    def check_sensing_errors(self):\n\
@@ -781,11 +781,11 @@ blocks:
       \        else:\n                self.pos.append(int(self.cent_freq))\n     \
       \           self.pos.append(int(self.int_freq))\n                self.pos.append(int(self.int2_freq))\n\
       \        \n        self.cumulative_reward += self.reward\n        # start RL\
-      \ stuff here\n\n\n        # update Q matrix\n\n        \t\n        # update\
-      \ state to next state\n\n\n        # choose next action\n\n        \n\t# control\
-      \ interference\n        self.int_freq = self.cent_freqs[self.int_pos[self.position]]\n\
-      \        self.int2_freq = self.cent_freqs[self.int2_pos[self.position]]\n  \
-      \      self.position += 1\n        if self.position == len(self.cent_freqs)-1:\n\
+      \ stuff here\n\n        # update Q matrix\n        \t\n        # update state\
+      \ to next state\n\n        # choose next action\n        \n\t# control interference\n\
+      \        self.int_freq = self.cent_freqs[self.int_pos[self.position]]\n    \
+      \    self.int2_freq = self.cent_freqs[self.int2_pos[self.position]]\n      \
+      \  self.position += 1\n        if self.position == len(self.cent_freqs)-1:\n\
       \           self.position = 0\n      \n        # send next actions\n       \
       \ PMT_msg_tx =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(self.cent_freq))\n\
       \        self.message_port_pub(pmt.intern(self.msg_port_name_tx), PMT_msg_tx)\n\
@@ -808,8 +808,8 @@ blocks:
     wide_samp_rate: wide_samp_rate
   states:
     _io_cache: ('Cognitive Engine', 'blk', [('num_channels', '8'), ('wide_samp_rate',
-      '2000000.0'), ('cent_freqs', '[]'), ('log_file', 'None')], [('packet_results',
-      'message', 1), ('rx_handler_psd', 'message', 1), ('sensing_results', 'message',
+      '2000000.0'), ('cent_freqs', '[]'), ('log_file', 'None')], [('rx_handler_psd',
+      'message', 1), ('sensing_results', 'message', 1), ('packet_results', 'message',
       1)], [('int2_cent_freq', 'message', 1), ('int_cent_freq', 'message', 1), ('rx_freq',
       'message', 1), ('tx_freq', 'message', 1)], 'Embedded Python Block example -
       a simple multiply const', ['cent_freqs', 'log_file', 'num_channels', 'wide_samp_rate'])

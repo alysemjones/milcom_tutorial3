@@ -41,6 +41,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
 
     def handle_msg_packet(self, msg):
     	# record packet results from the receiver here
+    	pass
 		
     	# transmit again when the following conditions are met
     	if self.count == 0 or self.packet == True or (time.time()-self.start_time > 0.05):

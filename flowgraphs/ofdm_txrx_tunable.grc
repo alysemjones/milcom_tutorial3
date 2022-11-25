@@ -430,15 +430,16 @@ blocks:
       \        self.message_port_register_in(pmt.intern(self.msg_input_packet))\n\
       \        self.set_msg_handler(pmt.intern(self.msg_input_packet), self.handle_msg_packet)\n\
       \        self.start_time = time.time()\n\n    def handle_msg_packet(self, msg):\n\
-      \    \t# record packet results from the receiver here\n\t\t\n    \t# transmit\
-      \ again when the following conditions are met\n    \tif self.count == 0 or self.packet\
-      \ == True or (time.time()-self.start_time > 0.05):\n    \t\tself.control_freq()\
-      \ # decides the next action(s)\n    \t\tself.count += 1\n    \t\tself.start_time\
-      \ = time.time()\n    \n    def control_freq(self):\n    \tif self.count < self.time_steps:\n\
-      \    \t\tself.previous_freq = self.cent_freq\n    \t\t# decide frequency here\n\
-      \n    \t\t# send new center frequency to the transmitter and receiver\n    \t\
-      \tPMT_msg_tx =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(self.cent_freq))\n\
-      \    \t\tPMT_msg_rx =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(-self.cent_freq))\n\
+      \    \t# record packet results from the receiver here\n    \tpass\n\t\t\n  \
+      \  \t# transmit again when the following conditions are met\n    \tif self.count\
+      \ == 0 or self.packet == True or (time.time()-self.start_time > 0.05):\n   \
+      \ \t\tself.control_freq() # decides the next action(s)\n    \t\tself.count +=\
+      \ 1\n    \t\tself.start_time = time.time()\n    \n    def control_freq(self):\n\
+      \    \tif self.count < self.time_steps:\n    \t\tself.previous_freq = self.cent_freq\n\
+      \    \t\t# decide frequency here\n\n    \t\t# send new center frequency to the\
+      \ transmitter and receiver\n    \t\tPMT_msg_tx =  pmt.dict_add(pmt.make_dict(),\
+      \ pmt.intern(\"freq\"), pmt.from_float(self.cent_freq))\n    \t\tPMT_msg_rx\
+      \ =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(-self.cent_freq))\n\
       \    \t\tself.message_port_pub(pmt.intern(self.msg_port_name_tx), PMT_msg_tx)\n\
       \    \t\tself.message_port_pub(pmt.intern(self.msg_port_name_rx), PMT_msg_rx)\n\
       \    \t\t\n    \t\t# enforce diagonal hopping here\n\n    \t\tprint(self.count,self.previous_freq,self.packet)\t\
@@ -613,13 +614,13 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    cent_freq: 0e6
+    cent_freq: -cent_freq
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    signal_samp_rate: 125e3
+    signal_samp_rate: signal_samp_rate
     threshold: '0.96'
-    wide_samp_rate: 125e3
+    wide_samp_rate: wide_samp_rate
   states:
     bus_sink: false
     bus_source: false
@@ -632,10 +633,10 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    back_pad: '500'
+    back_pad: back_pad
     buffer_percentage: '0.25'
     comment: ''
-    front_pad: '500'
+    front_pad: front_pad
     maxoutbuf: '0'
     minoutbuf: '0'
   states:

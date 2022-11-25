@@ -167,15 +167,15 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         for c in range(1, 2):
             self.top_grid_layout.setColumnStretch(c, 1)
         self.ofdm_tx_hier_usrp_tutorial_0 = ofdm_tx_hier_usrp_tutorial(
-            back_pad=500,
+            back_pad=back_pad,
             buffer_percentage=0.25,
-            front_pad=500,
+            front_pad=front_pad,
         )
         self.ofdm_rx_hier_tutorial_0 = ofdm_rx_hier_tutorial(
-            cent_freq=0e6,
-            signal_samp_rate=125e3,
+            cent_freq=-cent_freq,
+            signal_samp_rate=signal_samp_rate,
             threshold=0.96,
-            wide_samp_rate=125e3,
+            wide_samp_rate=wide_samp_rate,
         )
         self.mmse_resampler_xx_0 = filter.mmse_resampler_cc(0, (signal_samp_rate/wide_samp_rate))
         self.low_pass_filter_0 = filter.interp_fir_filter_ccf(
@@ -261,6 +261,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         self.analog_sig_source_x_0.set_sampling_freq(self.wide_samp_rate)
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.wide_samp_rate, (self.signal_samp_rate/2), (0.25*self.signal_samp_rate/2), window.WIN_HAMMING, 6.76))
         self.mmse_resampler_xx_0.set_resamp_ratio((self.signal_samp_rate/self.wide_samp_rate))
+        self.ofdm_rx_hier_tutorial_0.set_wide_samp_rate(self.wide_samp_rate)
         self.qtgui_time_sink_x_0_0.set_samp_rate(self.wide_samp_rate)
 
     def get_time_steps(self):
@@ -285,6 +286,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
     def set_front_pad(self, front_pad):
         self.front_pad = front_pad
         self.set_head_size(int((self.front_pad+self.back_pad+self.num_samps)*(self.wide_samp_rate/(1e6))*self.time_steps))
+        self.ofdm_tx_hier_usrp_tutorial_0.set_front_pad(self.front_pad)
 
     def get_back_pad(self):
         return self.back_pad
@@ -292,6 +294,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
     def set_back_pad(self, back_pad):
         self.back_pad = back_pad
         self.set_head_size(int((self.front_pad+self.back_pad+self.num_samps)*(self.wide_samp_rate/(1e6))*self.time_steps))
+        self.ofdm_tx_hier_usrp_tutorial_0.set_back_pad(self.back_pad)
 
     def get_snr(self):
         return self.snr
@@ -309,6 +312,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         self.set_samps_per_symb(float(self.wide_samp_rate/self.signal_samp_rate))
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.wide_samp_rate, (self.signal_samp_rate/2), (0.25*self.signal_samp_rate/2), window.WIN_HAMMING, 6.76))
         self.mmse_resampler_xx_0.set_resamp_ratio((self.signal_samp_rate/self.wide_samp_rate))
+        self.ofdm_rx_hier_tutorial_0.set_signal_samp_rate(self.signal_samp_rate)
 
     def get_num_channels(self):
         return self.num_channels
@@ -376,6 +380,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         self.cent_freq = cent_freq
         self.analog_sig_source_x_0.set_frequency(self.cent_freq)
         self.epy_block_0.cent_freq = self.cent_freq
+        self.ofdm_rx_hier_tutorial_0.set_cent_freq(-self.cent_freq)
 
 
 

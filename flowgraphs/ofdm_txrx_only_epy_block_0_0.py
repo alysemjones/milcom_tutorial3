@@ -133,7 +133,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.time_diff += end_time - self.start_time
         
         # decide reward here
-
+        
            
         if self.count % 100 == 0:
            self.time_diff_avg = self.time_diff/100
@@ -222,15 +222,11 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.cumulative_reward += self.reward
         # start RL stuff here
 
-
         # update Q matrix
-
         	
         # update state to next state
 
-
         # choose next action
-
         
 	# control interference
         self.int_freq = self.cent_freqs[self.int_pos[self.position]]

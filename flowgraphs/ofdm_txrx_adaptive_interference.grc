@@ -758,13 +758,13 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    cent_freq: 0e6
+    cent_freq: -cent_freq
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    signal_samp_rate: 125e3
+    signal_samp_rate: signal_samp_rate
     threshold: '0.96'
-    wide_samp_rate: 125e3
+    wide_samp_rate: wide_samp_rate
   states:
     bus_sink: false
     bus_source: false
@@ -777,10 +777,10 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    back_pad: '500'
+    back_pad: back_pad
     buffer_percentage: '0.25'
     comment: ''
-    front_pad: '500'
+    front_pad: front_pad
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
