@@ -25,16 +25,18 @@ import os
 import sys
 sys.path.append(os.environ.get('GRC_HIER_PATH', os.path.expanduser('~/.grc_gnuradio')))
 
+from PyQt5 import Qt
+from gnuradio import qtgui
+from gnuradio.filter import firdes
+import sip
 from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import channels
-from gnuradio.filter import firdes
 from gnuradio import fft
 from gnuradio.fft import window
 from gnuradio import filter
 from gnuradio import gr
 import signal
-from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
@@ -89,7 +91,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.wide_samp_rate = wide_samp_rate = 1e6
-        self.num_zeros = num_zeros = 2000
+        self.num_zeros = num_zeros = 1000
         self.num_header_symbs = num_header_symbs = 3
         self.num_data_symbs = num_data_symbs = 7
         self.num_channels = num_channels = 8
@@ -121,6 +123,41 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
+        self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
+            1024, #size
+            window.WIN_BLACKMAN_hARRIS, #wintype
+            0, #fc
+            wide_samp_rate, #bw
+            "", #name
+            1, #number of inputs
+            None # parent
+        )
+        self.qtgui_waterfall_sink_x_0.set_update_time(0.01)
+        self.qtgui_waterfall_sink_x_0.enable_grid(False)
+        self.qtgui_waterfall_sink_x_0.enable_axis_labels(True)
+
+
+
+        labels = ['', '', '', '', '',
+                  '', '', '', '', '']
+        colors = [0, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0]
+        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
+                  1.0, 1.0, 1.0, 1.0, 1.0]
+
+        for i in range(1):
+            if len(labels[i]) == 0:
+                self.qtgui_waterfall_sink_x_0.set_line_label(i, "Data {0}".format(i))
+            else:
+                self.qtgui_waterfall_sink_x_0.set_line_label(i, labels[i])
+            self.qtgui_waterfall_sink_x_0.set_color_map(i, colors[i])
+            self.qtgui_waterfall_sink_x_0.set_line_alpha(i, alphas[i])
+
+        self.qtgui_waterfall_sink_x_0.set_intensity_range(-140, 10)
+
+        self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.qwidget(), Qt.QWidget)
+
+        self.top_layout.addWidget(self._qtgui_waterfall_sink_x_0_win)
         self.ofdm_tx_hier_usrp_0 = ofdm_tx_hier_usrp(
             back_pad=back_pad,
             buffer_percentage=buffer_percentage,
@@ -159,16 +196,15 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
             noise_voltage=0.1,
             frequency_offset=0.0,
             epsilon=1.0,
-            taps=[1.0 + 1.0j],
+            taps=[1.0],
             noise_seed=0,
             block_tags=False)
         self.blocks_tagged_stream_align_0 = blocks.tagged_stream_align(gr.sizeof_gr_complex*1, 'burst_start')
         self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_gr_complex*1, N)
+        self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_char*1)
         self.blocks_multiply_xx_0_1 = blocks.multiply_vcc(1)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
-        self.blocks_multiply_const_vxx_1 = blocks.multiply_const_cc(1/sqrt(fft_len))
-        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '../data/rx_bits.dat', False)
-        self.blocks_file_sink_0.set_unbuffered(False)
+        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_cc(0.125)
         self.blocks_complex_to_mag_squared_0 = blocks.complex_to_mag_squared(N)
         self.blocks_add_xx_1 = blocks.add_vcc(1)
         self.blocks_add_xx_0 = blocks.add_vcc(1)
@@ -176,7 +212,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         self.analog_sig_source_x_0_0_0 = analog.sig_source_c(wide_samp_rate, analog.GR_COS_WAVE, cent_freq_list[2], 2.5, 0, 0)
         self.analog_sig_source_x_0_0 = analog.sig_source_c(wide_samp_rate, analog.GR_COS_WAVE, cent_freq_list[1], 2.5, 0, 0)
         self.analog_sig_source_x_0 = analog.sig_source_c(wide_samp_rate, analog.GR_COS_WAVE, (int(cent_freq-freq_usrp)), 1.0, 0, 0.0)
-        self.analog_noise_source_x_0 = analog.noise_source_c(analog.GR_GAUSSIAN, noise_volt, 0)
+        self.analog_noise_source_x_0_0_0 = analog.noise_source_c(analog.GR_GAUSSIAN, noise_volt, 0)
 
 
         ##################################################
@@ -190,27 +226,28 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         self.msg_connect((self.epy_block_2, 'energy_vec'), (self.epy_block_0_0, 'sensing_results'))
         self.msg_connect((self.epy_block_2, 'packet_len_psd'), (self.epy_block_0_0, 'rx_handler_psd'))
         self.msg_connect((self.ofdm_rx_hier_usrp_0, 'packet_data'), (self.epy_block_0_0, 'packet_results'))
-        self.connect((self.analog_noise_source_x_0, 0), (self.blocks_add_xx_0, 0))
+        self.connect((self.analog_noise_source_x_0_0_0, 0), (self.blocks_add_xx_0, 0))
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
         self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_add_xx_1, 0))
         self.connect((self.analog_sig_source_x_0_0_0, 0), (self.blocks_add_xx_1, 1))
         self.connect((self.analog_sig_source_x_0_1, 0), (self.blocks_multiply_xx_0_1, 1))
         self.connect((self.blocks_add_xx_0, 0), (self.blocks_tagged_stream_align_0, 0))
-        self.connect((self.blocks_add_xx_1, 0), (self.blocks_multiply_const_vxx_1, 0))
+        self.connect((self.blocks_add_xx_1, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.blocks_complex_to_mag_squared_0, 0), (self.epy_block_2, 0))
-        self.connect((self.blocks_multiply_const_vxx_1, 0), (self.blocks_add_xx_0, 1))
-        self.connect((self.blocks_multiply_const_vxx_1, 0), (self.channels_channel_model_0, 0))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_add_xx_0, 1))
+        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.channels_channel_model_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_add_xx_1, 2))
         self.connect((self.blocks_multiply_xx_0_1, 0), (self.low_pass_filter_0_0, 0))
         self.connect((self.blocks_stream_to_vector_0, 0), (self.fft_vxx_0, 0))
         self.connect((self.blocks_tagged_stream_align_0, 0), (self.blocks_stream_to_vector_0, 0))
         self.connect((self.channels_channel_model_0, 0), (self.blocks_multiply_xx_0_1, 0))
+        self.connect((self.channels_channel_model_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
         self.connect((self.fft_vxx_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.blocks_multiply_xx_0, 0))
         self.connect((self.low_pass_filter_0_0, 0), (self.mmse_resampler_xx_0_0, 0))
         self.connect((self.mmse_resampler_xx_0, 0), (self.low_pass_filter_0, 0))
         self.connect((self.mmse_resampler_xx_0_0, 0), (self.ofdm_rx_hier_usrp_0, 0))
-        self.connect((self.ofdm_rx_hier_usrp_0, 0), (self.blocks_file_sink_0, 0))
+        self.connect((self.ofdm_rx_hier_usrp_0, 0), (self.blocks_null_sink_0, 0))
         self.connect((self.ofdm_tx_hier_usrp_0, 0), (self.mmse_resampler_xx_0, 0))
 
 
@@ -240,6 +277,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         self.mmse_resampler_xx_0.set_resamp_ratio((self.signal_samp_rate/self.wide_samp_rate))
         self.mmse_resampler_xx_0_0.set_resamp_ratio((self.wide_samp_rate/self.signal_samp_rate))
         self.ofdm_rx_hier_usrp_0.set_wide_samp_rate(self.wide_samp_rate)
+        self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.wide_samp_rate)
 
     def get_num_zeros(self):
         return self.num_zeros
@@ -352,7 +390,6 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
     def set_fft_len(self, fft_len):
         self.fft_len = fft_len
         self.set_noise_volt(pow(1.0/(self.fft_len*2*pow(10.0,self.snr/10.0)),0.5))
-        self.blocks_multiply_const_vxx_1.set_k(1/sqrt(self.fft_len))
 
     def get_cent_freq_list(self):
         return self.cent_freq_list
@@ -406,7 +443,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
 
     def set_noise_volt(self, noise_volt):
         self.noise_volt = noise_volt
-        self.analog_noise_source_x_0.set_amplitude(self.noise_volt)
+        self.analog_noise_source_x_0_0_0.set_amplitude(self.noise_volt)
 
     def get_linear_gain(self):
         return self.linear_gain

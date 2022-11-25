@@ -31,6 +31,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.cent_freqs = cent_freqs
         self.log_file = log_file
         self.samp_rate = int(self.wide_samp_rate/(1e6))
+        # message stuff
         self.msg_port_name_tx = 'tx_freq'
         self.msg_port_name_rx = 'rx_freq'
         self.msg_port_name_int = 'int_cent_freq'
@@ -38,7 +39,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.msg_input_sensing = 'sensing_results'
         self.msg_input_packet = 'packet_results'
         self.msg_input_change_rx = 'rx_handler_psd'
-        #self.msg_input_change_rx2 = 'rx_handler_chan'
         self.message_port_register_out(pmt.intern(self.msg_port_name_tx))
         self.message_port_register_out(pmt.intern(self.msg_port_name_rx))
         self.message_port_register_out(pmt.intern(self.msg_port_name_int))
@@ -49,11 +49,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.set_msg_handler(pmt.intern(self.msg_input_packet), self.handle_msg_packet)
         self.message_port_register_in(pmt.intern(self.msg_input_change_rx))
         self.set_msg_handler(pmt.intern(self.msg_input_change_rx), self.handle_msg_rx_freq)
-        #self.message_port_register_in(pmt.intern(self.msg_input_change_rx2))
-        #self.set_msg_handler(pmt.intern(self.msg_input_change_rx2), self.handle_msg_rx_freq2)
-        #self.cent_freqs = np.arange(-int((self.samp_rate/2)+(self.samp_rate/(self.num_channels*2))),int((self.samp_rate/2)+(self.samp_rate/(self.num_channels*2))),self.samp_rate/self.num_channels)
-        #self.cent_freqs = self.cent_freqs[1:]
-        print(self.cent_freqs)
         self.position = 0
         self.count_sensor = 0
         self.count_packet = 0
@@ -113,13 +108,10 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     
     def handle_msg_sensing(self, msg): 
     	self.channels = pmt.to_python(msg)
-    	if self.count == 0:
-    	   print(self.channels)
-    	#print(self.channels)
-    	self.channels = [0 if i < 20 else 1 for i in self.channels]
+    	self.channels = [0 if i < 2 else 1 for i in self.channels]
     	self.count_sensor += 1
     	self.sensor_flag = True
-    	if self.count_sensor < 100*102:
+    	if self.count_sensor < 100*101:
     	   self.pos = []
     	   self.sensing_errors = 0
     	   self.packet_errors = 0
@@ -134,38 +126,18 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     		self.packet = True
     		self.count_packet += 1
     		self.packet_flag = True
-    	#if self.counter < 1000:
-    	#    self.change_frequency()
-    	#    PMT_msg_send =  pmt.dict_add(pmt.make_dict(), pmt.intern("transmit"), pmt.to_pmt('Send Frame'))
-    	#    self.message_port_pub(pmt.intern(self.msg_port_name_send), PMT_msg_send)
-    	    #zmq_socket_packet.send(pmt.serialize_str(pmt.to_pmt('Send Frame')))
-    	   
-    	#if self.sensor_flag == True and self.packet_flag == True:
-    	#       self.check_synch()
-    
-    #def handle_msg_rx_freq2(self, msg):
-    #    self.start_time = time.time()
         
     def handle_msg_rx_freq(self, msg):
         end_time = time.time()
         self.check_sensing_errors()
-        #print(self.pos, self.channels)
-        #print(self.count, self.count_packet, self.counter, self.pos, self.channels, self.packet, self.tot_sensing_errors, self.tot_packet_errors)
         self.time_diff += end_time - self.start_time
-        if self.packet == True:
-           self.reward = 1
-        else:
-           self.reward = 0
+        
+        # decide reward here
+
+           
         if self.count % 100 == 0:
-           '''
-           if self.count > 100*45 and self.change == 0:
-              if self.cumulative_reward < 95:
-                 self.epsilon_count = 0
-                 self.count_previous = 0
-                 self.change = 1
-           '''
            self.time_diff_avg = self.time_diff/100
-           print(self.count, self.epsilon, self.count_packet, self.previous_reward, self.cumulative_reward, self.tot_sensing_errors, self.tot_packet_errors, self.time_diff_avg)
+          # print(self.count, self.epsilon, self.count_packet, self.previous_reward, self.cumulative_reward, self.tot_sensing_errors, self.tot_packet_errors, self.time_diff_avg)
            print(self.count, self.cumulative_reward)
            self.previous_reward = self.cumulative_reward
            self.cumulative_reward_list.append(self.cumulative_reward)
@@ -181,14 +153,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.packet_flag = False
         self.count += 1
         self.packet = False
-        '''
-        if self.count == 100*40:
-           print(self.int_pos, self.int2_pos)
-           self.int_pos = random.sample(range(0,self.num_channels-1),self.num_channels-1)
-           self.int2_pos = random.sample(range(0,self.num_channels-1),self.num_channels-1)    
-           print(self.int_pos, self.int2_pos)
-           self.position = 0      
-        '''  
         if self.count == 10000:
            self.save_data()
     
@@ -228,7 +192,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
                self.tot_sensing_errors += 1
         if self.packet_errors == 1:
                self.tot_packet_errors += 1
-        #print(idx_list, self.packet, self.tot_packet_errors)
 
     def convertIndexToTuple(self,state):
     	return(tuple(int(x) for x in np.base_repr(state, self.num_values, self.num_actions)[-self.num_actions::]))
@@ -241,34 +204,10 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     		self.policy[s] = random.randrange(0,self.num_channels)
     
     def decay_epsilon(self,t):
-    	epsilon = self.min_epsilon + (self.max_epsilon - self.min_epsilon) * np.exp(-self.decay_rate * t)
-    	return epsilon
+    	pass
 
     def choose_action(self,t):
-    	p = random.uniform(0,1)
-    	if self.count % 100 == 0:
-    		self.epsilon = self.decay_epsilon(self.epsilon_count)
-    		self.epsilon_count += 1
-    	#if self.count == 100*20:
-    	#	print(self.count)
-    	#	self.epsilon_count == 0
-    	'''
-    	if t <= int(self.time_steps*0.25):
-    		epsilon = 0.90
-    	elif t <= int(self.time_steps*0.5) and t > int(self.time_steps*0.25):
-    		epsilon = 0.75
-    	elif t <= int(self.time_steps*0.75) and t > int(self.time_steps*0.5):
-    		epsilon = 0.25
-    	else:
-    		epsilon = 0.01
-    	'''
-    	if p > self.epsilon:
-    		if self.count % 100 == 0:
-    			self.policy = self.Q.argmax(axis=1)
-    		a = self.policy[self.s]
-    	else:
-    		a = random.choice(list(enumerate(self.cent_freqs)))[0]
-    	return a
+    	pass
     
     def reinforcement_learning(self):
         if self.count == 0:
@@ -281,31 +220,26 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
                 self.pos.append(int(self.int2_freq))
         
         self.cumulative_reward += self.reward
-        self.next_state = [int(x) for x in self.channels]
-        self.s_next = int(self.convertTupleToIndex(self.next_state))
+        # start RL stuff here
+
+
         # update Q matrix
-        self.metric = self.alpha * (self.reward + self.gamma * np.max(self.Q[int(self.s_next), :]) - self.Q[self.s,self.a])
-        self.Q[self.s,self.a] += self.metric
+
         	
         # update state to next state
-        self.state = self.next_state
-        self.s = int(self.convertTupleToIndex(self.state))
+
 
         # choose next action
-        self.a = int(self.choose_action(self.count))
-        self.cent_freq = self.cent_freqs[self.a]
+
         
-        #self.cent_freq = self.cent_freqs[self.position]
+	# control interference
         self.int_freq = self.cent_freqs[self.int_pos[self.position]]
         self.int2_freq = self.cent_freqs[self.int2_pos[self.position]]
         self.position += 1
         if self.position == len(self.cent_freqs)-1:
            self.position = 0
-        
-        #self.empty = [i for i,val in enumerate(self.channels) if val==0]
-        #idx = random.choice(self.empty)
-        #self.cent_freq = self.cent_freqs[idx]
-        
+      
+        # send next actions
         PMT_msg_tx =  pmt.dict_add(pmt.make_dict(), pmt.intern("freq"), pmt.from_float(self.cent_freq))
         self.message_port_pub(pmt.intern(self.msg_port_name_tx), PMT_msg_tx)
         PMT_msg_rx =  pmt.dict_add(pmt.make_dict(), pmt.intern("freq"), pmt.from_float(-self.cent_freq))
