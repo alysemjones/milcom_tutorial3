@@ -196,6 +196,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, '../data/rx_bits.dat', False)
         self.blocks_file_sink_0.set_unbuffered(False)
         self.blocks_add_xx_0 = blocks.add_vcc(1)
+        self.analog_sig_source_x_1 = analog.sig_source_c(wide_samp_rate, analog.GR_COS_WAVE, cent_freq_list[4], 1, 0, 0)
         self.analog_sig_source_x_0 = analog.sig_source_c(wide_samp_rate, analog.GR_COS_WAVE, cent_freq, 1.0, 0, 0.0)
         self.analog_noise_source_x_0 = analog.noise_source_c(analog.GR_GAUSSIAN, noise_volt, 0)
 
@@ -204,11 +205,13 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.msg_connect((self.epy_block_0, 'tx_cent_freq'), (self.analog_sig_source_x_0, 'cmd'))
+        self.msg_connect((self.epy_block_0, 'int_cent_freq'), (self.analog_sig_source_x_1, 'cmd'))
         self.msg_connect((self.epy_block_0, 'rx_cent_freq'), (self.ofdm_rx_hier_tutorial_0, 'cent_freq'))
         self.msg_connect((self.epy_block_0, 'tx_cent_freq'), (self.ofdm_tx_hier_usrp_tutorial_0, 'send_burst'))
         self.msg_connect((self.ofdm_rx_hier_tutorial_0, 'packet_data'), (self.epy_block_0, 'packet_results'))
         self.connect((self.analog_noise_source_x_0, 0), (self.blocks_add_xx_0, 0))
         self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.analog_sig_source_x_1, 0), (self.blocks_add_xx_0, 2))
         self.connect((self.blocks_add_xx_0, 0), (self.blocks_tag_gate_0, 0))
         self.connect((self.blocks_add_xx_0, 0), (self.qtgui_time_sink_x_0_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_add_xx_0, 1))
@@ -259,6 +262,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
         self.set_head_size(int((self.front_pad+self.back_pad+self.num_samps)*(self.wide_samp_rate/(1e6))*self.time_steps))
         self.set_samps_per_symb(float(self.wide_samp_rate/self.signal_samp_rate))
         self.analog_sig_source_x_0.set_sampling_freq(self.wide_samp_rate)
+        self.analog_sig_source_x_1.set_sampling_freq(self.wide_samp_rate)
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.wide_samp_rate, (self.signal_samp_rate/2), (0.25*self.signal_samp_rate/2), window.WIN_HAMMING, 6.76))
         self.mmse_resampler_xx_0.set_resamp_ratio((self.signal_samp_rate/self.wide_samp_rate))
         self.ofdm_rx_hier_tutorial_0.set_wide_samp_rate(self.wide_samp_rate)
@@ -371,6 +375,7 @@ class ofdm_txrx_only(gr.top_block, Qt.QWidget):
 
     def set_cent_freq_list(self, cent_freq_list):
         self.cent_freq_list = cent_freq_list
+        self.analog_sig_source_x_1.set_frequency(self.cent_freq_list[4])
         self.epy_block_0.cent_freqs = self.cent_freq_list
 
     def get_cent_freq(self):

@@ -33,18 +33,6 @@ options:
     state: enabled
 
 blocks:
-- name: N
-  id: variable
-  parameters:
-    comment: ''
-    value: num_channels*8
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1000, 140.0]
-    rotation: 0
-    state: true
 - name: back_pad
   id: variable
   parameters:
@@ -73,27 +61,15 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '[int(i) for i in np.arange(-wide_samp_rate/2, wide_samp_rate/2, wide_samp_rate/num_channels)]'
+    value: '[int(i) for i in np.linspace(-wide_samp_rate/2+signal_samp_rate/2, wide_samp_rate/2-signal_samp_rate/2,
+      num_channels)]'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [488, 268.0]
+    coordinate: [496, 268.0]
     rotation: 0
     state: enabled
-- name: channel_map
-  id: variable
-  parameters:
-    comment: ''
-    value: '[int(num_channels/2) + i*1 if i < int(num_channels/2) else -int(num_channels/2)+i*1
-      for i in range(num_channels)]'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [856, 268.0]
-    rotation: 0
-    state: true
 - name: fft_len
   id: variable
   parameters:
@@ -163,7 +139,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [616, 76.0]
+    coordinate: [608, 76.0]
     rotation: 0
     state: enabled
 - name: num_header_symbs
@@ -211,7 +187,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [520, 76.0]
+    coordinate: [400, 332.0]
     rotation: 0
     state: enabled
 - name: rand_seed
@@ -278,7 +254,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '100'
+    value: '10'
   states:
     bus_sink: false
     bus_source: false
@@ -339,14 +315,14 @@ blocks:
     coordinate: [688, 628.0]
     rotation: 0
     state: enabled
-- name: analog_sig_source_x_0_0
+- name: analog_sig_source_x_1
   id: analog_sig_source_x
   parameters:
     affinity: ''
     alias: ''
-    amp: '2'
+    amp: '1'
     comment: ''
-    freq: cent_freq_list[5]
+    freq: cent_freq_list[4]
     maxoutbuf: '0'
     minoutbuf: '0'
     offset: '0'
@@ -360,7 +336,7 @@ blocks:
     bus_structure: null
     coordinate: [688, 356.0]
     rotation: 0
-    state: enabled
+    state: true
 - name: blocks_add_xx_0
   id: blocks_add_xx
   parameters:
@@ -379,22 +355,6 @@ blocks:
     coordinate: [1064, 520.0]
     rotation: 0
     state: true
-- name: blocks_complex_to_mag_squared_0_0
-  id: blocks_complex_to_mag_squared
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    vlen: num_channels
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [744, 884.0]
-    rotation: 0
-    state: enabled
 - name: blocks_file_sink_0
   id: blocks_file_sink
   parameters:
@@ -410,7 +370,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1496, 444.0]
+    coordinate: [1488, 444.0]
     rotation: 180
     state: true
 - name: blocks_file_sink_0_0
@@ -428,7 +388,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [184, 580.0]
+    coordinate: [200, 580.0]
     rotation: 180
     state: true
 - name: blocks_multiply_xx_0
@@ -447,24 +407,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [928, 536.0]
-    rotation: 0
-    state: enabled
-- name: blocks_streams_to_vector_0
-  id: blocks_streams_to_vector
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_streams: num_channels
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: true
-    bus_source: false
-    bus_structure: null
-    coordinate: [552, 876.0]
     rotation: 0
     state: enabled
 - name: blocks_tag_gate_0
@@ -493,9 +435,9 @@ blocks:
       \ GRC will instantiate the first class it finds\nto get ports and parameters\
       \ of your block. The arguments to __init__  will\nbe the parameters. All of\
       \ them are required to have default values!\n\"\"\"\n\nimport pmt\nimport numpy\
-      \ as np\nfrom gnuradio import gr\nimport time\nimport random\n\n\nclass blk(gr.sync_block):\
+      \ as np\nfrom gnuradio import gr\nimport time\n\n\nclass blk(gr.sync_block):\
       \  # other base classes are basic_block, decim_block, interp_block\n    \"\"\
-      \"Embedded Python Block example - a simple multiply const\"\"\"\n\n    def __init__(self,cent_freqs=[],time_steps=10,cent_freq=0e6,num_channels=8):\
+      \"Embedded Python Block example - a simple multiply const\"\"\"\n\n    def __init__(self,cent_freqs=[],time_steps=10,cent_freq=0e6):\
       \  # only default arguments here\n        \"\"\"arguments to this function show\
       \ up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n         \
       \   self,\n            name='Cognitive Engine',   # will show up in GRC\n  \
@@ -503,45 +445,35 @@ blocks:
       \ attribute with the same name as a parameter is found,\n        # a callback\
       \ is registered (properties work, too).\n        self.cent_freqs = cent_freqs\n\
       \        self.time_steps = time_steps\n        self.cent_freq = cent_freq\n\
-      \        self.num_channels = num_channels\n        self.msg_port_name_tx = 'tx_cent_freq'\n\
-      \        self.msg_port_name_rx = 'rx_cent_freq'\n        self.msg_port_name_int\
-      \ = 'int_cent_freq'\n        self.msg_input_packet = 'packet_results'\n    \
-      \    self.msg_input_sensing = 'sensing_results'\n        self.count = 0\n  \
-      \      self.pos = 0\n        self.int_choices = random.sample(range(0,self.num_channels-1),self.num_channels-1)\n\
-      \        self.int_pos = 5\n        self.num_collisions = 0\n        self.message_port_register_out(pmt.intern(self.msg_port_name_rx))\n\
+      \        self.msg_port_name_tx = 'tx_cent_freq'\n        self.msg_port_name_rx\
+      \ = 'rx_cent_freq'\n        self.msg_port_name_int = 'int_cent_freq'\n     \
+      \   self.msg_input_packet = 'packet_results'\n        self.count = 0\n     \
+      \   self.pos = 0\n        self.message_port_register_out(pmt.intern(self.msg_port_name_rx))\n\
       \        self.message_port_register_out(pmt.intern(self.msg_port_name_tx))\n\
       \        self.message_port_register_out(pmt.intern(self.msg_port_name_int))\n\
       \        self.message_port_register_in(pmt.intern(self.msg_input_packet))\n\
-      \        self.message_port_register_in(pmt.intern(self.msg_input_sensing))\n\
       \        self.set_msg_handler(pmt.intern(self.msg_input_packet), self.handle_msg_packet)\n\
-      \        self.set_msg_handler(pmt.intern(self.msg_input_sensing), self.handle_msg_sensing)\n\
-      \        self.start_time = time.time()\n\n    def handle_msg_sensing(self, msg):\
-      \ \n    \t# add sensing results here\n    \tself.channels = pmt.to_python(msg)\n\
-      \    \tself.channels = [0 if i<2 else 1 for i in self.channels]\n    \tself.control_freq()\n\
-      \    \tself.count += 1\n\t\n    def handle_msg_packet(self, msg):\n    \t# record\
-      \ packet results from the receiver\n    \tpacketVal = pmt.to_python(msg)\n \
-      \   \tif packetVal == False:\n    \t\tself.packet = False\n    \telse:\n   \
-      \ \t\tself.packet = True\n    \n    def control_freq(self):\n    \tif self.count\
-      \ < self.time_steps:\n    \t\tself.previous_freq = self.cent_freq\n    \t\t\
-      # choose next action according to sensing results here\n    \t\tchoices = [i\
-      \ for i,e in enumerate(self.channels) if e == 0]\n    \t\tself.pos = random.choice(choices)\n\
-      \t\t\n    \t\tself.cent_freq = self.cent_freqs[self.pos]\n    \t\tint_freq =\
-      \ self.cent_freqs[self.int_choices[self.int_pos]] # change to new strategy here\n\
-      \    \t\t\n    \t\t# send new center frequency to the transmitter and receiver\n\
-      \    \t\tPMT_msg_tx =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(self.cent_freq))\n\
-      \    \t\tPMT_msg_rx =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(-self.cent_freq))\n\
+      \        self.start_time = time.time()\n\n    def handle_msg_packet(self, msg):\n\
+      \    \t# record packet results from the receiver here\n    \tpacketVal = pmt.to_python(msg)\n\
+      \    \tif packetVal == False:\n    \t\tself.packet = False\n    \telse:\n  \
+      \  \t\tself.packet = True\n\t\t\n    \t# transmit again when the following conditions\
+      \ are met\n    \tif self.count == 0 or self.packet == True or (time.time()-self.start_time\
+      \ > 0.02):\n    \t\tself.control_freq() # decides the next action(s)\n    \t\
+      \tself.count += 1\n    \t\tself.start_time = time.time()\n    \n    def control_freq(self):\n\
+      \    \tif self.count < self.time_steps:\n    \t\tself.previous_freq = self.cent_freq\n\
+      \    \t\t# decide frequency here\n    \t\tself.cent_freq = self.cent_freqs[self.pos]\n\
+      \    \t\tint_freq = self.cent_freqs[5]\n\n    \t\t# send new center frequency\
+      \ to the transmitter and receiver\n    \t\tPMT_msg_tx =  pmt.dict_add(pmt.make_dict(),\
+      \ pmt.intern(\"freq\"), pmt.from_float(self.cent_freq))\n    \t\tPMT_msg_rx\
+      \ =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(-self.cent_freq))\n\
       \    \t\tPMT_msg_int =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"),\
       \ pmt.from_float(int_freq))\n    \t\tself.message_port_pub(pmt.intern(self.msg_port_name_tx),\
       \ PMT_msg_tx)\n    \t\tself.message_port_pub(pmt.intern(self.msg_port_name_rx),\
       \ PMT_msg_rx)\n    \t\tself.message_port_pub(pmt.intern(self.msg_port_name_int),\
-      \ PMT_msg_int)\n    \t\t#if self.pos == (len(self.cent_freqs)-1):\n    \t\t\
-      #\tself.pos = 0\n    \t\t#else:\n    \t\t#\tself.pos += 1  \n    \t\t# control\
-      \ interference frequency here\n    \t\tif self.int_pos == (len(self.int_choices)-1):\n\
-      \    \t\t\tself.int_pos = 0\n    \t\telse:\n    \t\t\tself.int_pos += 1\n  \
-      \   \t\t\n    \t\tif sum(self.channels) != 2:\n    \t\t\tself.num_collisions\
-      \ += 1\n    \t\tprint(self.count,int_freq,self.previous_freq,self.packet,self.channels)\n\
-      \    \telse:\n    \t\tprint('Number of collisions: ' + str(self.num_collisions))\n\
-      \n    def work(self, input_items, output_items):\n        return len(input_items[0])\n"
+      \ PMT_msg_int)\n    \t\t\n    \t\t# enforce diagonal hopping here\n    \t\t\
+      if self.pos == (len(self.cent_freqs)-1):\n    \t\t\tself.pos = 0\n    \t\telse:\n\
+      \    \t\t\tself.pos += 1\n    \t\tprint(self.count,int_freq,self.previous_freq,self.packet)\t\
+      \n\n    def work(self, input_items, output_items):\n        return len(input_items[0])\n"
     affinity: ''
     alias: ''
     cent_freq: cent_freq
@@ -549,69 +481,19 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    num_channels: num_channels
     time_steps: time_steps
   states:
     _io_cache: ('Cognitive Engine', 'blk', [('cent_freqs', '[]'), ('time_steps', '10'),
-      ('cent_freq', '0.0'), ('num_channels', '8')], [('sensing_results', 'message',
-      1), ('packet_results', 'message', 1)], [('int_cent_freq', 'message', 1), ('tx_cent_freq',
-      'message', 1), ('rx_cent_freq', 'message', 1)], 'Embedded Python Block example
-      - a simple multiply const', ['cent_freq', 'cent_freqs', 'num_channels', 'time_steps'])
+      ('cent_freq', '0.0')], [('packet_results', 'message', 1)], [('int_cent_freq',
+      'message', 1), ('tx_cent_freq', 'message', 1), ('rx_cent_freq', 'message', 1)],
+      'Embedded Python Block example - a simple multiply const', ['cent_freq', 'cent_freqs',
+      'time_steps'])
     bus_sink: false
     bus_source: false
     bus_structure: null
     coordinate: [680, 768.0]
     rotation: 180
     state: true
-- name: epy_block_1
-  id: epy_block
-  parameters:
-    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
-      \ GRC will instantiate the first class it finds\nto get ports and parameters\
-      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
-      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
-      from gnuradio import gr\nimport pmt\n\nclass blk(gr.sync_block):  # other base\
-      \ classes are basic_block, decim_block, interp_block\n    \"\"\"Embedded Python\
-      \ Block example - a simple multiply const\"\"\"\n\n    def __init__(self, num_chans=8):\
-      \  # only default arguments here\n        \"\"\"arguments to this function show\
-      \ up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n         \
-      \   self,\n            name='Sensing',   # will show up in GRC\n           \
-      \ in_sig=[(np.float32,num_chans)],\n            out_sig=None\n        )\n  \
-      \      # if an attribute with the same name as a parameter is found,\n     \
-      \   # a callback is registered (properties work, too).\n        self.num_chans\
-      \ = num_chans\n        self.energy_vect = np.zeros(self.num_chans)\n       \
-      \ self.start_flag = 0\n        self.end_flag = 0\n        self.num_samps = 0\n\
-      \        \n        self.portName = 'energy_vec'\n        self.message_port_register_out(pmt.intern(self.portName))\n\
-      \    \n    def work(self, input_items, output_items):\n        tagTuple = self.get_tags_in_window(0,\
-      \ 0, len(input_items[0]))\n                \n        start_index = 0\n     \
-      \   end_index = len(input_items[0])\n        for tag in tagTuple:\n        \
-      \    if (pmt.to_python(tag.key) == 'burst_start') and ~start_index:\n      \
-      \          self.energy_vect = np.zeros(self.num_chans)\n                start_index\
-      \ = tag.offset - self.nitems_read(0)\n                self.start_flag = 1\n\
-      \            if (pmt.to_python(tag.key) == 'burst_end') and ~end_index:\n  \
-      \              end_index = tag.offset - self.nitems_read(0)\n              \
-      \  self.end_flag = 1\n                             \n        if self.start_flag\
-      \ == 1:\n            for i in range(start_index,end_index):\n              \
-      \  self.energy_vect += input_items[0][i]\n                self.num_samps +=\
-      \ 1\n            \n        if self.end_flag == 1:\n            self.message_port_pub(pmt.intern(self.portName),\
-      \ pmt.to_pmt(self.energy_vect/self.num_samps))\n            self.start_flag\
-      \ = 0\n            self.end_flag = 0\n            self.num_samps = 0\n     \
-      \   \n        return len(input_items[0])\n"
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_chans: num_channels
-  states:
-    _io_cache: ('Sensing', 'blk', [('num_chans', '8')], [('0', 'float', 8)], [('energy_vec',
-      'message', 1)], 'Embedded Python Block example - a simple multiply const', ['num_chans'])
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [944, 884.0]
-    rotation: 0
-    state: enabled
 - name: import_0
   id: import
   parameters:
@@ -792,31 +674,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [88, 500.0]
+    coordinate: [104, 500.0]
     rotation: 0
     state: true
-- name: pfb_channelizer_ccf_1_0
-  id: pfb_channelizer_ccf
-  parameters:
-    affinity: ''
-    alias: ''
-    atten: '80'
-    bus_structure_source: ''
-    ch_map: channel_map
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    nchans: num_channels
-    osr: '1'
-    samp_delay: '0'
-    taps: taps
-  states:
-    bus_sink: false
-    bus_source: true
-    bus_structure: null
-    coordinate: [256, 860.0]
-    rotation: 0
-    state: enabled
 - name: qtgui_time_sink_x_0_0
   id: qtgui_time_sink_x
   parameters:
@@ -914,57 +774,25 @@ blocks:
     coordinate: [1184, 428.0]
     rotation: 0
     state: enabled
-- name: virtual_sink_0
-  id: virtual_sink
-  parameters:
-    alias: ''
-    comment: ''
-    stream_id: sensing_stream
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1184, 372.0]
-    rotation: 0
-    state: enabled
-- name: virtual_source_0_0
-  id: virtual_source
-  parameters:
-    alias: ''
-    comment: ''
-    stream_id: sensing_stream
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [24, 884.0]
-    rotation: 0
-    state: enabled
 
 connections:
 - [analog_noise_source_x_0, '0', blocks_add_xx_0, '0']
 - [analog_sig_source_x_0, '0', blocks_multiply_xx_0, '1']
-- [analog_sig_source_x_0_0, '0', blocks_add_xx_0, '2']
+- [analog_sig_source_x_1, '0', blocks_add_xx_0, '2']
 - [blocks_add_xx_0, '0', blocks_tag_gate_0, '0']
 - [blocks_add_xx_0, '0', qtgui_time_sink_x_0_0, '0']
-- [blocks_add_xx_0, '0', virtual_sink_0, '0']
-- [blocks_complex_to_mag_squared_0_0, '0', epy_block_1, '0']
 - [blocks_multiply_xx_0, '0', blocks_add_xx_0, '1']
-- [blocks_streams_to_vector_0, '0', blocks_complex_to_mag_squared_0_0, '0']
 - [blocks_tag_gate_0, '0', ofdm_rx_hier_tutorial_0, '0']
-- [epy_block_0, int_cent_freq, analog_sig_source_x_0_0, cmd]
+- [epy_block_0, int_cent_freq, analog_sig_source_x_1, cmd]
 - [epy_block_0, rx_cent_freq, ofdm_rx_hier_tutorial_0, cent_freq]
 - [epy_block_0, tx_cent_freq, analog_sig_source_x_0, cmd]
 - [epy_block_0, tx_cent_freq, ofdm_tx_hier_usrp_tutorial_0, send_burst]
-- [epy_block_1, energy_vec, epy_block_0, sensing_results]
 - [low_pass_filter_0, '0', blocks_multiply_xx_0, '0']
 - [mmse_resampler_xx_0, '0', low_pass_filter_0, '0']
 - [ofdm_rx_hier_tutorial_0, '0', blocks_file_sink_0, '0']
 - [ofdm_rx_hier_tutorial_0, packet_data, epy_block_0, packet_results]
 - [ofdm_tx_hier_usrp_tutorial_0, '0', mmse_resampler_xx_0, '0']
 - [ofdm_tx_hier_usrp_tutorial_0, '1', blocks_file_sink_0_0, '0']
-- [pfb_channelizer_ccf_1_0, '8', blocks_streams_to_vector_0, '8']
-- [virtual_source_0_0, '0', pfb_channelizer_ccf_1_0, '0']
 
 metadata:
   file_format: 1

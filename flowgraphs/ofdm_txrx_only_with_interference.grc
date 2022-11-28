@@ -37,7 +37,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: num_zeros
+    value: '500'
   states:
     bus_sink: false
     bus_source: false
@@ -49,25 +49,12 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 0e6
+    value: '0'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
     coordinate: [400, 268.0]
-    rotation: 0
-    state: enabled
-- name: cent_freq_list
-  id: variable
-  parameters:
-    comment: ''
-    value: '[int(i) for i in np.linspace(-wide_samp_rate/2+signal_samp_rate/2, wide_samp_rate/2-signal_samp_rate/2,
-      num_channels)]'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [496, 268.0]
     rotation: 0
     state: enabled
 - name: fft_len
@@ -86,7 +73,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: num_zeros
+    value: '500'
   states:
     bus_sink: false
     bus_source: false
@@ -116,18 +103,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [1248, 76.0]
-    rotation: 0
-    state: enabled
-- name: num_channels
-  id: variable
-  parameters:
-    comment: ''
-    value: '8'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [664, 268.0]
     rotation: 0
     state: enabled
 - name: num_data_symbs
@@ -176,18 +151,6 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [856, 204.0]
-    rotation: 0
-    state: enabled
-- name: num_zeros
-  id: variable
-  parameters:
-    comment: ''
-    value: '1000'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [400, 332.0]
     rotation: 0
     state: enabled
 - name: rand_seed
@@ -254,7 +217,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '10'
+    value: '1'
   states:
     bus_sink: false
     bus_source: false
@@ -290,7 +253,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [864, 452.0]
+    coordinate: [672, 420.0]
     rotation: 0
     state: true
 - name: analog_sig_source_x_0
@@ -298,13 +261,13 @@ blocks:
   parameters:
     affinity: ''
     alias: ''
-    amp: '1.0'
+    amp: '1'
     comment: ''
-    freq: cent_freq
+    freq: 12e6
     maxoutbuf: '0'
     minoutbuf: '0'
     offset: '0'
-    phase: '0.0'
+    phase: '0'
     samp_rate: wide_samp_rate
     type: complex
     waveform: analog.GR_COS_WAVE
@@ -312,9 +275,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [688, 628.0]
+    coordinate: [648, 292.0]
     rotation: 0
-    state: enabled
+    state: true
 - name: blocks_add_xx_0
   id: blocks_add_xx
   parameters:
@@ -323,14 +286,14 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    num_inputs: '2'
+    num_inputs: '3'
     type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1064, 520.0]
+    coordinate: [904, 472.0]
     rotation: 0
     state: true
 - name: blocks_file_sink_0
@@ -348,7 +311,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1488, 444.0]
+    coordinate: [1360, 564.0]
     rotation: 180
     state: true
 - name: blocks_file_sink_0_0
@@ -366,27 +329,27 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [200, 580.0]
-    rotation: 180
+    coordinate: [472, 548.0]
+    rotation: 0
     state: true
-- name: blocks_multiply_xx_0
-  id: blocks_multiply_xx
+- name: blocks_head_0
+  id: blocks_head
   parameters:
     affinity: ''
     alias: ''
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    num_inputs: '2'
+    num_items: head_size
     type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [928, 536.0]
+    coordinate: [472, 500.0]
     rotation: 0
-    state: enabled
+    state: true
 - name: blocks_tag_gate_0
   id: blocks_tag_gate
   parameters:
@@ -403,67 +366,27 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1184, 524.0]
+    coordinate: [1040, 476.0]
     rotation: 0
     state: true
-- name: epy_block_0
-  id: epy_block
+- name: blocks_throttle_0
+  id: blocks_throttle
   parameters:
-    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
-      \ GRC will instantiate the first class it finds\nto get ports and parameters\
-      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
-      \ them are required to have default values!\n\"\"\"\n\nimport pmt\nimport numpy\
-      \ as np\nfrom gnuradio import gr\nimport time\n\n\nclass blk(gr.sync_block):\
-      \  # other base classes are basic_block, decim_block, interp_block\n    \"\"\
-      \"Embedded Python Block example - a simple multiply const\"\"\"\n\n    def __init__(self,cent_freqs=[],time_steps=10,cent_freq=0e6):\
-      \  # only default arguments here\n        \"\"\"arguments to this function show\
-      \ up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n         \
-      \   self,\n            name='Cognitive Engine',   # will show up in GRC\n  \
-      \          in_sig=None,\n            out_sig=None\n        )\n        # if an\
-      \ attribute with the same name as a parameter is found,\n        # a callback\
-      \ is registered (properties work, too).\n        self.cent_freqs = cent_freqs\n\
-      \        self.time_steps = time_steps\n        self.cent_freq = cent_freq\n\
-      \        self.msg_port_name_tx = 'tx_cent_freq'\n        self.msg_port_name_rx\
-      \ = 'rx_cent_freq'\n        self.msg_input_packet = 'packet_results'\n     \
-      \   self.count = 0\n        self.pos = 0\n        self.message_port_register_out(pmt.intern(self.msg_port_name_rx))\n\
-      \        self.message_port_register_out(pmt.intern(self.msg_port_name_tx))\n\
-      \        self.message_port_register_in(pmt.intern(self.msg_input_packet))\n\
-      \        self.set_msg_handler(pmt.intern(self.msg_input_packet), self.handle_msg_packet)\n\
-      \        self.start_time = time.time()\n\n    def handle_msg_packet(self, msg):\n\
-      \    \t# record packet results from the receiver here\n    \tpacketVal = pmt.to_python(msg)\n\
-      \    \tif packetVal == False:\n    \t\tself.packet = False\n    \telse:\n  \
-      \  \t\tself.packet = True\n\t\t\n    \t# transmit again when the following conditions\
-      \ are met\n    \tif self.count == 0 or self.packet == True or (time.time()-self.start_time\
-      \ > 0.05):\n    \t\tself.control_freq() # decides the next action(s)\n    \t\
-      \tself.count += 1\n    \t\tself.start_time = time.time()\n    \n    def control_freq(self):\n\
-      \    \tif self.count < self.time_steps:\n    \t\tself.previous_freq = self.cent_freq\n\
-      \    \t\t# decide frequency here\n    \t\tself.cent_freq = self.cent_freqs[self.pos]\n\
-      \n    \t\t# send new center frequency to the transmitter and receiver\n    \t\
-      \tPMT_msg_tx =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(self.cent_freq))\n\
-      \    \t\tPMT_msg_rx =  pmt.dict_add(pmt.make_dict(), pmt.intern(\"freq\"), pmt.from_float(-self.cent_freq))\n\
-      \    \t\tself.message_port_pub(pmt.intern(self.msg_port_name_tx), PMT_msg_tx)\n\
-      \    \t\tself.message_port_pub(pmt.intern(self.msg_port_name_rx), PMT_msg_rx)\n\
-      \    \t\t\n    \t\t# enforce diagonal hopping here\n    \t\tif self.pos == (len(self.cent_freqs)-1):\n\
-      \    \t\t\tself.pos = 0\n    \t\telse:\n    \t\t\tself.pos += 1\n    \t\tprint(self.count,self.previous_freq,self.packet)\t\
-      \n\n    def work(self, input_items, output_items):\n        return len(input_items[0])\n"
     affinity: ''
     alias: ''
-    cent_freq: cent_freq
-    cent_freqs: cent_freq_list
     comment: ''
+    ignoretag: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
-    time_steps: time_steps
+    samples_per_second: wide_samp_rate
+    type: complex
+    vlen: '1'
   states:
-    _io_cache: ('Cognitive Engine', 'blk', [('cent_freqs', '[]'), ('time_steps', '10'),
-      ('cent_freq', '0.0')], [('packet_results', 'message', 1)], [('tx_cent_freq',
-      'message', 1), ('rx_cent_freq', 'message', 1)], 'Embedded Python Block example
-      - a simple multiply const', ['cent_freq', 'cent_freqs', 'time_steps'])
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [680, 768.0]
-    rotation: 180
+    coordinate: [688, 500.0]
+    rotation: 0
     state: true
 - name: import_0
   id: import
@@ -517,61 +440,6 @@ blocks:
     coordinate: [8, 244.0]
     rotation: 0
     state: enabled
-- name: import_1
-  id: import
-  parameters:
-    alias: ''
-    comment: ''
-    imports: import numpy as np
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [8, 292.0]
-    rotation: 0
-    state: true
-- name: low_pass_filter_0
-  id: low_pass_filter
-  parameters:
-    affinity: ''
-    alias: ''
-    beta: '6.76'
-    comment: ''
-    cutoff_freq: signal_samp_rate/2
-    decim: '1'
-    gain: '1'
-    interp: '1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_rate: wide_samp_rate
-    type: interp_fir_filter_ccf
-    width: 0.25*signal_samp_rate/2
-    win: window.WIN_HAMMING
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [704, 484.0]
-    rotation: 0
-    state: enabled
-- name: mmse_resampler_xx_0
-  id: mmse_resampler_xx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    phase_shift: '0'
-    resamp_ratio: signal_samp_rate/wide_samp_rate
-    type: complex
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [480, 504.0]
-    rotation: 0
-    state: enabled
 - name: note_0_0_0_0
   id: note
   parameters:
@@ -611,8 +479,8 @@ blocks:
     coordinate: [1288, 20.0]
     rotation: 0
     state: true
-- name: ofdm_rx_hier_tutorial_0
-  id: ofdm_rx_hier_tutorial
+- name: ofdm_rx_hier_0
+  id: ofdm_rx_hier
   parameters:
     affinity: ''
     alias: ''
@@ -621,31 +489,32 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     signal_samp_rate: signal_samp_rate
-    threshold: '0.96'
     wide_samp_rate: wide_samp_rate
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1408, 524.0]
+    coordinate: [1312, 484.0]
     rotation: 0
-    state: true
-- name: ofdm_tx_hier_usrp_tutorial_0
-  id: ofdm_tx_hier_usrp_tutorial
+    state: enabled
+- name: ofdm_tx_hier_0
+  id: ofdm_tx_hier
   parameters:
     affinity: ''
     alias: ''
     back_pad: back_pad
-    buffer_percentage: '0.25'
+    cent_freq: cent_freq
     comment: ''
     front_pad: front_pad
     maxoutbuf: '0'
     minoutbuf: '0'
+    signal_samp_rate: signal_samp_rate
+    wide_samp_rate: wide_samp_rate
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [104, 500.0]
+    coordinate: [144, 484.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0_0
@@ -742,26 +611,21 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1184, 428.0]
+    coordinate: [1040, 540.0]
     rotation: 0
     state: enabled
 
 connections:
 - [analog_noise_source_x_0, '0', blocks_add_xx_0, '0']
-- [analog_sig_source_x_0, '0', blocks_multiply_xx_0, '1']
+- [analog_sig_source_x_0, '0', blocks_add_xx_0, '2']
 - [blocks_add_xx_0, '0', blocks_tag_gate_0, '0']
 - [blocks_add_xx_0, '0', qtgui_time_sink_x_0_0, '0']
-- [blocks_multiply_xx_0, '0', blocks_add_xx_0, '1']
-- [blocks_tag_gate_0, '0', ofdm_rx_hier_tutorial_0, '0']
-- [epy_block_0, rx_cent_freq, ofdm_rx_hier_tutorial_0, cent_freq]
-- [epy_block_0, tx_cent_freq, analog_sig_source_x_0, cmd]
-- [epy_block_0, tx_cent_freq, ofdm_tx_hier_usrp_tutorial_0, send_burst]
-- [low_pass_filter_0, '0', blocks_multiply_xx_0, '0']
-- [mmse_resampler_xx_0, '0', low_pass_filter_0, '0']
-- [ofdm_rx_hier_tutorial_0, '0', blocks_file_sink_0, '0']
-- [ofdm_rx_hier_tutorial_0, packet_data, epy_block_0, packet_results]
-- [ofdm_tx_hier_usrp_tutorial_0, '0', mmse_resampler_xx_0, '0']
-- [ofdm_tx_hier_usrp_tutorial_0, '1', blocks_file_sink_0_0, '0']
+- [blocks_head_0, '0', blocks_throttle_0, '0']
+- [blocks_tag_gate_0, '0', ofdm_rx_hier_0, '0']
+- [blocks_throttle_0, '0', blocks_add_xx_0, '1']
+- [ofdm_rx_hier_0, '0', blocks_file_sink_0, '0']
+- [ofdm_tx_hier_0, '0', blocks_head_0, '0']
+- [ofdm_tx_hier_0, '1', blocks_file_sink_0_0, '0']
 
 metadata:
   file_format: 1

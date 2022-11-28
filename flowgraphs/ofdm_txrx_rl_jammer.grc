@@ -267,7 +267,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: '1000'
+    value: '1500'
   states:
     bus_sink: false
     bus_source: false
@@ -738,8 +738,8 @@ blocks:
       \ += 1\n    \t\tself.packet_flag = True\n        \n    def handle_msg_rx_freq(self,\
       \ msg):\n        end_time = time.time()\n        self.check_sensing_errors()\n\
       \        self.time_diff += end_time - self.start_time\n        \n        # decide\
-      \ reward here\n        if self.packet == True:\n        \tself.reward = 1\n\
-      \        else:\n        \tself.reward = 0\n           \n        if self.count\
+      \ reward here\n        if self.packet == True:\n        \tself.reward = 0\n\
+      \        else:\n        \tself.reward = 1\n           \n        if self.count\
       \ % 100 == 0:\n           self.time_diff_avg = self.time_diff/100\n        \
       \  # print(self.count, self.epsilon, self.count_packet, self.previous_reward,\
       \ self.cumulative_reward, self.tot_sensing_errors, self.tot_packet_errors, self.time_diff_avg)\n\

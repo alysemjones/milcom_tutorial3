@@ -133,7 +133,10 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.time_diff += end_time - self.start_time
         
         # decide reward here
-        
+        if self.packet == True:
+        	self.reward = 1
+        else:
+        	self.reward = 0
            
         if self.count % 100 == 0:
            self.time_diff_avg = self.time_diff/100
@@ -204,10 +207,21 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     		self.policy[s] = random.randrange(0,self.num_channels)
     
     def decay_epsilon(self,t):
-    	pass
+    	epsilon = self.min_epsilon + (self.max_epsilon - self.min_epsilon) * np.exp(-self.decay_rate * t)
+    	return epsilon
 
-    def choose_action(self,t):
-    	pass
+    def choose_action(self):
+    	n = random.uniform(0,1)
+    	if self.count % 100 == 0:
+    		self.epsilon = self.decay_epsilon(self.epsilon_count)
+    		self.epsilon_count += 1
+    	if n > self.epsilon:
+    		if self.count % 100 == 0:
+    			self.policy = self.Q.argmax(axis=1)
+    		a = self.policy[self.s]
+    	else:
+    		a = random.choice(list(enumerate(self.cent_freqs)))[0]
+    	return a
     
     def reinforcement_learning(self):
         if self.count == 0:
@@ -221,12 +235,17 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         
         self.cumulative_reward += self.reward
         # start RL stuff here
-
+        self.next_state = [int(x) for x in self.channels]
+        self.s_next = int(self.convertTupleToIndex(self.next_state))
         # update Q matrix
+        self.Q[self.s,self.a] += self.alpha * (self.reward + self.gamma * np.max(self.Q[int(self.s_next),:]) - self.Q[self.s,self.a])
         	
         # update state to next state
-
+        self.state = self.next_state
+        self.s = int(self.convertTupleToIndex(self.state))
         # choose next action
+        self.a = int(self.choose_action())
+        self.cent_freq = self.cent_freqs[self.a]
         
 	# control interference
         self.int_freq = self.cent_freqs[self.int_pos[self.position]]

@@ -30,21 +30,27 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.cent_freq = cent_freq
         self.msg_port_name_tx = 'tx_cent_freq'
         self.msg_port_name_rx = 'rx_cent_freq'
+        self.msg_port_name_int = 'int_cent_freq'
         self.msg_input_packet = 'packet_results'
         self.count = 0
         self.pos = 0
         self.message_port_register_out(pmt.intern(self.msg_port_name_rx))
         self.message_port_register_out(pmt.intern(self.msg_port_name_tx))
+        self.message_port_register_out(pmt.intern(self.msg_port_name_int))
         self.message_port_register_in(pmt.intern(self.msg_input_packet))
         self.set_msg_handler(pmt.intern(self.msg_input_packet), self.handle_msg_packet)
         self.start_time = time.time()
 
     def handle_msg_packet(self, msg):
     	# record packet results from the receiver here
-    	pass
+    	packetVal = pmt.to_python(msg)
+    	if packetVal == False:
+    		self.packet = False
+    	else:
+    		self.packet = True
 		
     	# transmit again when the following conditions are met
-    	if self.count == 0 or self.packet == True or (time.time()-self.start_time > 0.05):
+    	if self.count == 0 or self.packet == True or (time.time()-self.start_time > 0.02):
     		self.control_freq() # decides the next action(s)
     		self.count += 1
     		self.start_time = time.time()
@@ -53,16 +59,23 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
     	if self.count < self.time_steps:
     		self.previous_freq = self.cent_freq
     		# decide frequency here
+    		self.cent_freq = self.cent_freqs[self.pos]
+    		int_freq = self.cent_freqs[5]
 
     		# send new center frequency to the transmitter and receiver
     		PMT_msg_tx =  pmt.dict_add(pmt.make_dict(), pmt.intern("freq"), pmt.from_float(self.cent_freq))
     		PMT_msg_rx =  pmt.dict_add(pmt.make_dict(), pmt.intern("freq"), pmt.from_float(-self.cent_freq))
+    		PMT_msg_int =  pmt.dict_add(pmt.make_dict(), pmt.intern("freq"), pmt.from_float(int_freq))
     		self.message_port_pub(pmt.intern(self.msg_port_name_tx), PMT_msg_tx)
     		self.message_port_pub(pmt.intern(self.msg_port_name_rx), PMT_msg_rx)
+    		self.message_port_pub(pmt.intern(self.msg_port_name_int), PMT_msg_int)
     		
     		# enforce diagonal hopping here
-
-    		print(self.count,self.previous_freq,self.packet)	
+    		if self.pos == (len(self.cent_freqs)-1):
+    			self.pos = 0
+    		else:
+    			self.pos += 1
+    		print(self.count,int_freq,self.previous_freq,self.packet)	
 
     def work(self, input_items, output_items):
         return len(input_items[0])
